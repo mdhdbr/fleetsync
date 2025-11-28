@@ -1,12 +1,15 @@
 {
-    "buildCommand": "cd packages/control-center && npm run build",
+    "buildCommand": "npm install && cd packages/control-center && npm run build",
     "outputDirectory": "packages/control-center/dist",
     "installCommand": "npm install",
     "framework": null,
-    "rewrites": [
+    "routes": [
         {
-            "source": "/(.*)",
-            "destination": "/index.html"
+            "handle": "filesystem"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/index.html"
         }
     ]
 }
