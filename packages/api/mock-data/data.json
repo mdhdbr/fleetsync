@@ -1,0 +1,263 @@
+{
+    "vehicles": [
+        {
+            "id": "veh_1",
+            "type": "sedan",
+            "lat": 24.7136,
+            "lng": 46.6753,
+            "status": "empty",
+            "driver": "Ali",
+            "fuel_level": 75,
+            "driver_hours_today": 4,
+            "needs_maintenance": false
+        },
+        {
+            "id": "veh_2",
+            "type": "truck",
+            "lat": 21.3891,
+            "lng": 39.8579,
+            "status": "loaded",
+            "driver": "Ahmed",
+            "fuel_level": 45,
+            "driver_hours_today": 6,
+            "needs_maintenance": false
+        },
+        {
+            "id": "veh_3",
+            "type": "sedan",
+            "lat": 24.7500,
+            "lng": 46.7000,
+            "status": "empty",
+            "driver": null,
+            "fuel_level": 90,
+            "driver_hours_today": 2,
+            "needs_maintenance": false
+        },
+        {
+            "id": "veh_4",
+            "type": "truck",
+            "lat": 26.4367,
+            "lng": 50.1039,
+            "status": "loaded",
+            "driver": "Hassan",
+            "fuel_level": 15,
+            "driver_hours_today": 7,
+            "needs_maintenance": true
+        }
+    ],
+    "warehouses": [
+        {
+            "id": "wh_1",
+            "name": "Riyadh Central Warehouse",
+            "lat": 24.7136,
+            "lng": 46.6753,
+            "capacity": 5000,
+            "current_stock": 3200,
+            "docks": 4
+        },
+        {
+            "id": "wh_2",
+            "name": "Jeddah Hub",
+            "lat": 21.3891,
+            "lng": 39.8579,
+            "capacity": 8000,
+            "current_stock": 6500,
+            "docks": 6
+        },
+        {
+            "id": "wh_3",
+            "name": "Dammam Distribution Center",
+            "lat": 26.4367,
+            "lng": 50.1039,
+            "capacity": 6000,
+            "current_stock": 4100,
+            "docks": 5
+        }
+    ],
+    "drivers": [
+        {
+            "id": "d1",
+            "name": "Ali",
+            "status": "on_duty"
+        }
+    ],
+    "trips": [
+        {
+            "id": "trip_101",
+            "status": "pending",
+            "origin": {
+                "lat": 24.7200,
+                "lng": 46.6800,
+                "address": "Riyadh Warehouse A"
+            },
+            "destination": {
+                "lat": 24.8000,
+                "lng": 46.7500,
+                "address": "Olaya Street Store"
+            },
+            "type": "freight",
+            "passengers": 1
+        }
+    ],
+    "inventory": [
+        {
+            "id": "inv_1",
+            "warehouse_id": "wh_2",
+            "item": "Electronics",
+            "qty": 100,
+            "bin": "A-12"
+        },
+        {
+            "id": "inv_2",
+            "warehouse_id": "wh_2",
+            "item": "Furniture",
+            "qty": 50,
+            "bin": "B-05"
+        }
+    ],
+    "dock_bookings": [
+        {
+            "id": "db_1",
+            "warehouse_id": "wh_2",
+            "dock_id": 1,
+            "start_time": "2025-11-28T10:00:00Z",
+            "end_time": "2025-11-28T11:00:00Z",
+            "truck_id": "veh_2"
+        }
+    ],
+    "telemetry_events": [
+        {
+            "vehicle_id": "veh_1",
+            "ts": "2025-11-26T08:00:00Z",
+            "lat": 24.7000,
+            "lng": 46.6700,
+            "speed": 40
+        },
+        {
+            "vehicle_id": "veh_1",
+            "ts": "2025-11-26T08:05:00Z",
+            "lat": 24.7100,
+            "lng": 46.6800,
+            "speed": 35
+        },
+        {
+            "vehicle_id": "veh_1",
+            "ts": "2025-11-26T08:10:00Z",
+            "lat": 24.7136,
+            "lng": 46.6753,
+            "speed": 0
+        },
+        {
+            "vehicle_id": "veh_2",
+            "ts": "2025-11-26T08:00:00Z",
+            "lat": 21.4200,
+            "lng": 39.8200,
+            "speed": 60
+        },
+        {
+            "vehicle_id": "veh_2",
+            "ts": "2025-11-26T08:05:00Z",
+            "lat": 21.4100,
+            "lng": 39.8400,
+            "speed": 55
+        },
+        {
+            "vehicle_id": "veh_2",
+            "ts": "2025-11-26T08:10:00Z",
+            "lat": 21.3891,
+            "lng": 39.8579,
+            "speed": 0
+        },
+        {
+            "vehicle_id": "veh_3",
+            "ts": "2025-11-26T08:00:00Z",
+            "lat": 24.7400,
+            "lng": 46.6900,
+            "speed": 45
+        },
+        {
+            "vehicle_id": "veh_3",
+            "ts": "2025-11-26T08:05:00Z",
+            "lat": 24.7450,
+            "lng": 46.6950,
+            "speed": 40
+        },
+        {
+            "vehicle_id": "veh_3",
+            "ts": "2025-11-26T08:10:00Z",
+            "lat": 24.7500,
+            "lng": 46.7000,
+            "speed": 0
+        }
+    ],
+    "shipments": [],
+    "alerts": [
+        {
+            "id": "alert_001",
+            "type": "speeding",
+            "severity": "high",
+            "message": "Vehicle exceeded speed limit: 135 km/h in 120 km/h zone",
+            "vehicle_id": "veh_2",
+            "status": "active",
+            "created_at": "2025-11-28T09:15:00Z",
+            "metadata": {
+                "speed": 135,
+                "limit": 120,
+                "location": "Highway 40"
+            }
+        },
+        {
+            "id": "alert_002",
+            "type": "fatigue",
+            "severity": "critical",
+            "message": "Driver has exceeded maximum working hours (11.5 hours)",
+            "vehicle_id": "veh_1",
+            "status": "active",
+            "created_at": "2025-11-28T08:30:00Z",
+            "metadata": {
+                "hours_worked": 11.5,
+                "limit": 10,
+                "driver": "Ali"
+            }
+        },
+        {
+            "id": "alert_003",
+            "type": "route_deviation",
+            "severity": "medium",
+            "message": "Vehicle deviated from planned route by 5.2 km",
+            "vehicle_id": "veh_3",
+            "status": "acknowledged",
+            "created_at": "2025-11-28T07:45:00Z",
+            "acknowledged_by": "dispatcher_01",
+            "acknowledged_at": "2025-11-28T08:00:00Z",
+            "metadata": {
+                "deviation_km": 5.2
+            }
+        },
+        {
+            "id": "alert_004",
+            "type": "maintenance",
+            "severity": "high",
+            "message": "Vehicle requires immediate maintenance check",
+            "vehicle_id": "veh_4",
+            "status": "active",
+            "created_at": "2025-11-28T06:00:00Z",
+            "metadata": {
+                "reason": "Engine warning light"
+            }
+        },
+        {
+            "id": "alert_005",
+            "type": "fuel_low",
+            "severity": "medium",
+            "message": "Fuel level critically low: 15%",
+            "vehicle_id": "veh_4",
+            "status": "active",
+            "created_at": "2025-11-28T09:00:00Z",
+            "metadata": {
+                "fuel_level": 15,
+                "threshold": 20
+            }
+        }
+    ]
+}

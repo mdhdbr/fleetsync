@@ -1,0 +1,120 @@
+# Default values for fleetsync
+replicaCount: 1
+
+api:
+  image:
+    repository: ghcr.io/your-org/fleetsync-api
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  
+  service:
+    type: ClusterIP
+    port: 4000
+  
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  
+  env:
+    - name: NODE_ENV
+      value: "production"
+    - name: PORT
+      value: "4000"
+
+controlCenter:
+  image:
+    repository: ghcr.io/your-org/fleetsync-control-center
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  
+  service:
+    type: ClusterIP
+    port: 80
+  
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+mobile:
+  image:
+    repository: ghcr.io/your-org/fleetsync-mobile
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  
+  service:
+    type: ClusterIP
+    port: 80
+  
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: fleetsync.example.com
+      paths:
+        - path: /api
+          pathType: Prefix
+          service: api
+        - path: /mobile
+          pathType: Prefix
+          service: mobile
+        - path: /
+          pathType: Prefix
+          service: control-center
+  tls:
+    - secretName: fleetsync-tls
+      hosts:
+        - fleetsync.example.com
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+persistence:
+  enabled: true
+  storageClass: "standard"
+  size: 10Gi
+  accessMode: ReadWriteOnce
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 2000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 1000
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

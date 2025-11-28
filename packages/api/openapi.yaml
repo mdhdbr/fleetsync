@@ -1,0 +1,558 @@
+openapi: 3.0.3
+info:
+  title: FleetSync API
+  description: |
+    FleetSync is a comprehensive fleet management system with real-time tracking,
+    telemetry ingestion, warehouse management, and driver allocation.
+  version: 1.0.0
+  contact:
+    name: FleetSync Team
+    email: api@fleetsync.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:4000
+    description: Development server
+  - url: https://api.fleetsync.com
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication endpoints
+  - name: Vehicles
+    description: Vehicle management
+  - name: Trips
+    description: Trip and job management
+  - name: Telemetry
+    description: Real-time telemetry data
+  - name: Alerts
+    description: Alert and notification system
+  - name: Allocation
+    description: Automatic job allocation
+  - name: WMS
+    description: Warehouse Management System
+  - name: Shipments
+    description: Freight and shipment management
+  - name: Reports
+    description: Analytics and reporting
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      tags: [System]
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /auth/login:
+    post:
+      summary: User login
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                  example: admin
+                password:
+                  type: string
+                  example: pass
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+
+  /vehicles:
+    get:
+      summary: Get all vehicles
+      tags: [Vehicles]
+      responses:
+        '200':
+          description: List of vehicles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vehicle'
+
+  /vehicles/{id}:
+    get:
+      summary: Get vehicle by ID
+      tags: [Vehicles]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Vehicle details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+
+  /telemetry:
+    post:
+      summary: Submit single telemetry event
+      tags: [Telemetry]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TelemetryEvent'
+      responses:
+        '201':
+          description: Telemetry received
+
+  /telemetry/bulk:
+    post:
+      summary: Submit bulk telemetry events
+      tags: [Telemetry]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                events:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TelemetryEvent'
+      responses:
+        '201':
+          description: Bulk telemetry received
+
+  /telemetry/vehicle/{vehicleId}:
+    get:
+      summary: Get telemetry for vehicle
+      tags: [Telemetry]
+      parameters:
+        - name: vehicleId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Vehicle telemetry data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  vehicleId:
+                    type: string
+                  count:
+                    type: integer
+                  events:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TelemetryEvent'
+
+  /trips:
+    get:
+      summary: Get all trips
+      tags: [Trips]
+      responses:
+        '200':
+          description: List of trips
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trip'
+    post:
+      summary: Create new trip
+      tags: [Trips]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripCreate'
+      responses:
+        '201':
+          description: Trip created
+
+  /trips/{id}/assign:
+    post:
+      summary: Assign trip to vehicle
+      tags: [Trips]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                vehicleId:
+                  type: string
+      responses:
+        '200':
+          description: Trip assigned
+
+  /trips/{id}/coa:
+    post:
+      summary: Complete on arrival
+      tags: [Trips]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: COA processed
+
+  /alerts:
+    get:
+      summary: Get active alerts
+      tags: [Alerts]
+      responses:
+        '200':
+          description: List of alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Alert'
+
+  /alerts/acknowledge:
+    post:
+      summary: Acknowledge alert
+      tags: [Alerts]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                alertId:
+                  type: string
+                userId:
+                  type: string
+      responses:
+        '200':
+          description: Alert acknowledged
+
+  /allocation/assign_next:
+    get:
+      summary: Auto-assign next job
+      tags: [Allocation]
+      parameters:
+        - name: vehicle_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assignment result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllocationResult'
+
+  /wms/inventory:
+    get:
+      summary: Get warehouse inventory
+      tags: [WMS]
+      responses:
+        '200':
+          description: Inventory list
+
+  /wms/push-inbound:
+    post:
+      summary: Create inbound ASN
+      tags: [WMS]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                warehouseId:
+                  type: string
+                items:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        '200':
+          description: ASN created
+
+  /wms/docks/book:
+    post:
+      summary: Book dock slot
+      tags: [WMS]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DockBooking'
+      responses:
+        '200':
+          description: Dock booked
+
+  /shipments:
+    get:
+      summary: Get all shipments
+      tags: [Shipments]
+      responses:
+        '200':
+          description: List of shipments
+    post:
+      summary: Create shipment
+      tags: [Shipments]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ShipmentCreate'
+      responses:
+        '201':
+          description: Shipment created
+
+  /reports/usage:
+    get:
+      summary: Get usage reports
+      tags: [Reports]
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Usage data
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [admin, driver, dispatcher]
+
+    Vehicle:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+        status:
+          type: string
+          enum: [empty, loaded, maintenance]
+        driver:
+          type: string
+        fuel_level:
+          type: number
+        driver_hours_today:
+          type: number
+        needs_maintenance:
+          type: boolean
+
+    TelemetryEvent:
+      type: object
+      required: [vehicleId, lat, lng, timestamp]
+      properties:
+        vehicleId:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+        speed:
+          type: number
+        heading:
+          type: number
+        fuel_level:
+          type: number
+        timestamp:
+          type: string
+          format: date-time
+
+    Trip:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        origin:
+          $ref: '#/components/schemas/Location'
+        destination:
+          $ref: '#/components/schemas/Location'
+        type:
+          type: string
+        passengers:
+          type: integer
+
+    TripCreate:
+      type: object
+      required: [origin, destination, type]
+      properties:
+        origin:
+          $ref: '#/components/schemas/Location'
+        destination:
+          $ref: '#/components/schemas/Location'
+        type:
+          type: string
+        passengers:
+          type: integer
+
+    Location:
+      type: object
+      properties:
+        lat:
+          type: number
+        lng:
+          type: number
+        address:
+          type: string
+
+    Alert:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        severity:
+          type: string
+          enum: [low, medium, high, critical]
+        message:
+          type: string
+        vehicle_id:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    AllocationResult:
+      type: object
+      properties:
+        status:
+          type: string
+        vehicle_id:
+          type: string
+        assignment:
+          type: object
+
+    DockBooking:
+      type: object
+      required: [warehouseId, dockId, startTime, endTime]
+      properties:
+        warehouseId:
+          type: string
+        dockId:
+          type: integer
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        truckId:
+          type: string
+
+    ShipmentCreate:
+      type: object
+      properties:
+        shipment_type:
+          type: string
+          enum: [LTL, FTL]
+        vehicle_type:
+          type: string
+        goods_description:
+          type: string
+        weight:
+          type: number
+        pod:
+          type: string
+          format: binary
+        bol:
+          type: string
+          format: binary
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []

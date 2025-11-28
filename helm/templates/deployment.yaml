@@ -1,0 +1,129 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "fleetsync.fullname" . }}-api
+  labels:
+    {{- include "fleetsync.labels" . | nindent 4 }}
+    app.kubernetes.io/component: api
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "fleetsync.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: api
+  template:
+    metadata:
+      labels:
+        {{- include "fleetsync.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: api
+    spec:
+      serviceAccountName: {{ include "fleetsync.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+      - name: api
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
+        imagePullPolicy: {{ .Values.api.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.api.service.port }}
+          protocol: TCP
+        env:
+        {{- toYaml .Values.api.env | nindent 8 }}
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          {{- toYaml .Values.api.resources | nindent 12 }}
+        volumeMounts:
+        - name: uploads
+          mountPath: /app/uploads
+      volumes:
+      - name: uploads
+        {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ include "fleetsync.fullname" . }}-uploads
+        {{- else }}
+        emptyDir: {}
+        {{- end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "fleetsync.fullname" . }}-control-center
+  labels:
+    {{- include "fleetsync.labels" . | nindent 4 }}
+    app.kubernetes.io/component: control-center
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "fleetsync.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: control-center
+  template:
+    metadata:
+      labels:
+        {{- include "fleetsync.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: control-center
+    spec:
+      serviceAccountName: {{ include "fleetsync.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+      - name: control-center
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: "{{ .Values.controlCenter.image.repository }}:{{ .Values.controlCenter.image.tag }}"
+        imagePullPolicy: {{ .Values.controlCenter.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.controlCenter.service.port }}
+          protocol: TCP
+        resources:
+          {{- toYaml .Values.controlCenter.resources | nindent 12 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "fleetsync.fullname" . }}-mobile
+  labels:
+    {{- include "fleetsync.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mobile
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "fleetsync.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: mobile
+  template:
+    metadata:
+      labels:
+        {{- include "fleetsync.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: mobile
+    spec:
+      serviceAccountName: {{ include "fleetsync.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+      - name: mobile
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: "{{ .Values.mobile.image.repository }}:{{ .Values.mobile.image.tag }}"
+        imagePullPolicy: {{ .Values.mobile.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.mobile.service.port }}
+          protocol: TCP
+        resources:
+          {{- toYaml .Values.mobile.resources | nindent 12 }}
