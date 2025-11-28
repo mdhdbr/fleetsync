@@ -74,7 +74,11 @@ app.get('/telemetry-events', (req, res) => {
 
 const PORT = process.env.PORT || 4000;
 
-httpServer.listen(PORT, () => {
-    console.log(`🚀 API server running on http://localhost:${PORT}`);
-    console.log(`📡 Socket.IO server ready`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    httpServer.listen(PORT, () => {
+        console.log(`🚀 API server running on http://localhost:${PORT}`);
+        console.log(`📡 Socket.IO server ready`);
+    });
+}
+
+export default app;

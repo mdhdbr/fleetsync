@@ -1,0 +1,26 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "packages/control-center/package.json",
+            "use": "@vercel/static-build",
+            "config": {
+                "distDir": "dist"
+            }
+        },
+        {
+            "src": "packages/api/src/index.js",
+            "use": "@vercel/node"
+        }
+    ],
+    "rewrites": [
+        {
+            "source": "/api/(.*)",
+            "destination": "/packages/api/src/index.js"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/packages/control-center/$1"
+        }
+    ]
+}
