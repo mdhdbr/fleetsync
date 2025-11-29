@@ -74,10 +74,13 @@ app.get('/telemetry-events', (req, res) => {
 
 const PORT = process.env.PORT || 4000;
 
-if (process.env.NODE_ENV !== 'production') {
+// Start server (for Railway, Render, etc.)
+// For Vercel serverless, the app export is used instead
+if (process.env.RAILWAY_ENVIRONMENT || process.env.RENDER || process.env.NODE_ENV !== 'test') {
     httpServer.listen(PORT, () => {
-        console.log(`🚀 API server running on http://localhost:${PORT}`);
+        console.log(`🚀 API server running on port ${PORT}`);
         console.log(`📡 Socket.IO server ready`);
+        console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
     });
 }
 
