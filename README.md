@@ -255,6 +255,41 @@ NODE_ENV=development
 ✅ TailwindCSS styling  
 ✅ Responsive design  
 
+## 🚀 Deployment
+
+FleetSync uses a **split deployment strategy** for optimal performance:
+
+### Frontend (Control Center & Mobile)
+**Platform**: Vercel  
+**Why**: Optimized for static sites and serverless functions, excellent CDN, zero-config deployments
+
+📖 **Deployment Guide**: See [VERCEL_FIX_GUIDE.md](VERCEL_FIX_GUIDE.md) for detailed instructions
+
+**Quick Deploy to Vercel:**
+1. Import repository to Vercel
+2. Set root directory to `./`
+3. Add environment variables:
+   - `VITE_API_URL` - Your API URL (from Railway/Render)
+   - `VITE_MAPBOX_TOKEN` - Your Mapbox token
+4. Deploy (vercel.json handles build configuration)
+
+### API Server
+**Platform**: Railway, Render, or Fly.io  
+**Why**: Supports WebSocket connections required for Socket.IO
+
+📖 **Deployment Guide**: See [packages/api/RAILWAY_DEPLOYMENT.md](packages/api/RAILWAY_DEPLOYMENT.md)
+
+> [!IMPORTANT]
+> **The API cannot be deployed to Vercel** because it uses Socket.IO, which requires persistent WebSocket connections that Vercel's serverless functions don't support.
+
+### Deployment Architecture
+```
+Frontend (Vercel) ←→ API (Railway/Render/Fly.io)
+     ↓                        ↓
+  HTTPS/CDN            WebSocket + REST
+```
+
+
 ## 📝 License
 
 Private - All rights reserved
