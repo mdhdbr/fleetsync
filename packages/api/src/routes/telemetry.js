@@ -1,5 +1,5 @@
 import express from 'express';
-import { createAlert } from './alerts.js';
+import Alert from '../models/Alert.js';
 
 const router = express.Router();
 
@@ -7,7 +7,7 @@ const router = express.Router();
 const telemetryStore = new Map(); // vehicleId -> array of events
 
 // POST single telemetry event
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     const telemetryData = {
         ...req.body,
         receivedAt: new Date().toISOString(),
@@ -20,13 +20,14 @@ router.post('/', (req, res) => {
 
     // Check for speeding
     if (telemetryData.speed > 120) {
-        const alert = createAlert(
-            'speeding',
-            'high',
-            `Vehicle ${telemetryData.vehicleId} exceeded speed limit: ${telemetryData.speed} km/h`,
-            telemetryData.vehicleId,
-            { speed: telemetryData.speed, location: { lat: telemetryData.lat, lng: telemetryData.lng } }
-        );
+        const alert = await Alert.create({
+            type: 'speeding',
+            severity: 'high',
+            title: 'Speed Limit Exceeded',
+            description: `Vehicle ${telemetryData.vehicleId} exceeded speed limit: ${telemetryData.speed} km/h`,
+            vehicle: telemetryData.vehicleId,
+            metadata: { speed: telemetryData.speed, location: { lat: telemetryData.lat, lon: telemetryData.lng } }
+        });
         io.emit('alert_new', alert);
         console.log('Alert generated:', alert);
     }
@@ -43,7 +44,7 @@ router.post('/', (req, res) => {
 });
 
 // POST bulk telemetry ingest
-router.post('/bulk', (req, res) => {
+router.post('/bulk', async (req, res) => {
     const { events } = req.body;
 
     if (!Array.isArray(events)) {
@@ -61,18 +62,19 @@ router.post('/bulk', (req, res) => {
     const io = req.app.get('io');
 
     // Check for alerts in bulk
-    processedEvents.forEach(event => {
+    for (const event of processedEvents) {
         if (event.speed > 120) {
-            const alert = createAlert(
-                'speeding',
-                'high',
-                `Vehicle ${event.vehicleId} exceeded speed limit: ${event.speed} km/h`,
-                event.vehicleId,
-                { speed: event.speed, location: { lat: event.lat, lng: event.lng } }
-            );
+            const alert = await Alert.create({
+                type: 'speeding',
+                severity: 'high',
+                title: 'Speed Limit Exceeded',
+                description: `Vehicle ${event.vehicleId} exceeded speed limit: ${event.speed} km/h`,
+                vehicle: event.vehicleId,
+                metadata: { speed: event.speed, location: { lat: event.lat, lon: event.lng } }
+            });
             io.emit('alert_new', alert);
         }
-    });
+    }
 
     res.status(201).json({
         message: 'Bulk telemetry received',

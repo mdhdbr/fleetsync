@@ -1,83 +1,114 @@
 import express from 'express';
-import { mockData } from '../store.js';
-import { v4 as uuidv4 } from 'uuid';
+import Alert from '../models/Alert.js';
+import { authenticate, authorize } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-// GET /alerts - Get active alerts
-router.get('/', (req, res) => {
-    // Filter for active alerts (or all if needed)
-    const activeAlerts = mockData.alerts.filter(a => a.status === 'active');
-    res.json(activeAlerts);
-});
+// GET all alerts (with optional filtering)
+router.get('/', authenticate, async (req, res) => {
+    try {
+        const { status, severity, type } = req.query;
+        const filter = {};
 
-// POST /alerts/acknowledge - Acknowledge an alert
-router.post('/acknowledge', (req, res) => {
-    const { alertId, userId } = req.body;
+        if (status) filter.status = status;
+        if (severity) filter.severity = severity;
+        if (type) filter.type = type;
 
-    const alert = mockData.alerts.find(a => a.id === alertId);
-    if (!alert) {
-        return res.status(404).json({ error: 'Alert not found' });
+        const alerts = await Alert.find(filter)
+            .populate('vehicle')
+            .populate('driver')
+            .populate('trip')
+            .sort({ createdAt: -1 })
+            .lean();
+
+        res.json(alerts);
+    } catch (error) {
+        console.error('Get alerts error:', error);
+        res.status(500).json({ message: 'Server error' });
     }
-
-    alert.status = 'acknowledged';
-    alert.acknowledged_by = userId || 'system';
-    alert.acknowledged_at = new Date().toISOString();
-
-    res.json({ success: true, alert });
 });
 
-// Helper to create alert (internal use mostly, but exposed for simulation)
-export const createAlert = (type, severity, message, vehicleId, metadata = {}) => {
-    const newAlert = {
-        id: uuidv4(),
-        type, // speeding, fatigue, route_deviation, temp_breach
-        severity, // low, medium, high, critical
-        message,
-        vehicle_id: vehicleId,
-        status: 'active',
-        created_at: new Date().toISOString(),
-        metadata
-    };
+// POST acknowledge alert
+router.post('/acknowledge', authenticate, async (req, res) => {
+    try {
+        const { alertId } = req.body;
 
-    if (!mockData.alerts) mockData.alerts = [];
-    mockData.alerts.push(newAlert);
-    return newAlert;
-};
+        const alert = await Alert.findById(alertId);
+        if (!alert) {
+            return res.status(404).json({ error: 'Alert not found' });
+        }
 
-// POST /alerts/simulate - Simulate an alert
-router.post('/simulate', (req, res) => {
-    const { type, severity, message, vehicleId } = req.body;
-    const alert = createAlert(type, severity, message, vehicleId);
+        alert.status = 'acknowledged';
+        alert.acknowledgedBy = req.user.id;
+        alert.acknowledgedAt = new Date();
+        await alert.save();
 
-    // Notify via Socket.IO
-    const io = req.app.get('io');
-    if (io) {
-        io.emit('alert_new', alert);
+        res.json({ success: true, alert });
+    } catch (error) {
+        console.error('Acknowledge alert error:', error);
+        res.status(500).json({ message: 'Server error' });
     }
-
-    res.json(alert);
 });
 
-// Alert thresholds (in-memory for POC)
+// POST resolve alert
+router.post('/resolve', authenticate, authorize('admin', 'dispatcher'), async (req, res) => {
+    try {
+        const { alertId } = req.body;
+
+        const alert = await Alert.findById(alertId);
+        if (!alert) {
+            return res.status(404).json({ error: 'Alert not found' });
+        }
+
+        alert.status = 'resolved';
+        alert.resolvedBy = req.user.id;
+        alert.resolvedAt = new Date();
+        await alert.save();
+
+        res.json({ success: true, alert });
+    } catch (error) {
+        console.error('Resolve alert error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// POST create alert (for simulation or manual creation)
+router.post('/simulate', authenticate, async (req, res) => {
+    try {
+        const alert = await Alert.create(req.body);
+
+        // Notify via Socket.IO
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('alert_new', alert);
+        }
+
+        res.status(201).json(alert);
+    } catch (error) {
+        console.error('Create alert error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Alert thresholds (stored in-memory for now, could be moved to DB)
 let alertThresholds = {
     speedLimit: 120,
     driverHoursLimit: 10,
     fuelLowThreshold: 20,
     engineTempHigh: 110,
-    routeDeviationKm: 5
+    routeDeviationKm: 5,
 };
 
 // GET alert thresholds
-router.get('/thresholds', (req, res) => {
+router.get('/thresholds', authenticate, (req, res) => {
     res.json(alertThresholds);
 });
 
 // POST update alert thresholds
-router.post('/thresholds', (req, res) => {
+router.post('/thresholds', authenticate, authorize('admin'), (req, res) => {
     alertThresholds = {
         ...alertThresholds,
-        ...req.body
+        ...req.body,
     };
     res.json({ success: true, thresholds: alertThresholds });
 });

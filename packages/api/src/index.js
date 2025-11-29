@@ -5,6 +5,7 @@ import { Server } from 'socket.io';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
 import tripRoutes from './routes/trips.js';
 import telemetryRoutes from './routes/telemetry.js';
@@ -16,6 +17,7 @@ import wmsRoutes from './routes/wms.js';
 import alertRoutes from './routes/alerts.js';
 import reportRoutes from './routes/reports.js';
 import docsRoutes from './routes/docs.js';
+import driverRoutes from './routes/drivers.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -36,7 +38,8 @@ app.use(express.json());
 // Serve uploaded files statically
 app.use('/uploads', express.static(join(__dirname, '../uploads')));
 
-import { mockData } from './store.js';
+// Connect to MongoDB
+connectDB();
 
 // Socket.IO connection
 io.on('connection', (socket) => {
@@ -65,6 +68,7 @@ app.use('/shipments', shipmentRoutes);
 app.use('/wms', wmsRoutes);
 app.use('/alerts', alertRoutes);
 app.use('/reports', reportRoutes);
+app.use('/drivers', driverRoutes);
 app.use('/api/docs', docsRoutes);
 
 // Telemetry events endpoint

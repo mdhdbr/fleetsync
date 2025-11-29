@@ -1,102 +1,123 @@
 import express from 'express';
-import { mockData } from '../store.js';
-import { findNearestVehicle, assignVehicleToTrip } from '../utils/assignment.js';
+import Trip from '../models/Trip.js';
+import Vehicle from '../models/Vehicle.js';
+import Driver from '../models/Driver.js';
+import { authenticate, authorize } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
 // GET all trips
-router.get('/', (req, res) => {
-    res.json(mockData.trips);
+router.get('/', authenticate, async (req, res) => {
+    try {
+        const trips = await Trip.find()
+            .populate('vehicle')
+            .populate('driver')
+            .sort({ createdAt: -1 })
+            .lean();
+        res.json(trips);
+    } catch (error) {
+        console.error('Get trips error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// GET single trip by ID
+router.get('/:id', authenticate, async (req, res) => {
+    try {
+        const trip = await Trip.findById(req.params.id).populate('vehicle').populate('driver');
+        if (!trip) {
+            return res.status(404).json({ message: 'Trip not found' });
+        }
+        res.json(trip);
+    } catch (error) {
+        console.error('Get trip error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
 });
 
 // POST create new trip
-router.post('/', (req, res) => {
-    const { type, origin, destination, passengers, addons } = req.body;
+router.post('/', authenticate, authorize('admin', 'dispatcher'), async (req, res) => {
+    try {
+        const tripId = `TRIP-${Date.now()}`;
+        const trip = await Trip.create({ ...req.body, tripId });
 
-    const newTrip = {
-        id: `trip_${Date.now()}`,
-        type: type || 'ride',
-        origin,
-        destination,
-        passengers: passengers || 1,
-        addons: addons || [],
-        status: 'pending',
-        created_at: new Date().toISOString()
-    };
-
-    mockData.trips.push(newTrip);
-
-    // Notify clients about new trip
-    const io = req.app.get('io');
-    if (io) {
-        io.emit('trip_update', { type: 'new', trip: newTrip });
-    }
-
-    res.status(201).json(newTrip);
-});
-
-// POST auto-assign vehicle to trip
-router.post('/:id/assign', (req, res) => {
-    const { id } = req.params;
-    const trip = mockData.trips.find(t => t.id === id);
-
-    if (!trip) {
-        return res.status(404).json({ message: 'Trip not found' });
-    }
-
-    if (trip.status !== 'pending') {
-        return res.status(400).json({ message: 'Trip is not pending' });
-    }
-
-    const nearestVehicle = findNearestVehicle(trip.origin.lat, trip.origin.lng, trip.type === 'ride' ? 'sedan' : 'truck');
-
-    if (!nearestVehicle) {
-        return res.status(404).json({ message: 'No available vehicles found' });
-    }
-
-    const result = assignVehicleToTrip(id, nearestVehicle.id);
-
-    if (result.success) {
+        // Emit socket event
         const io = req.app.get('io');
         if (io) {
-            io.emit('trip_update', { type: 'update', trip: result.trip });
-            io.emit('vehicle_update', { type: 'update', vehicle: result.vehicle });
+            io.emit('trip_update', { type: 'new', trip });
         }
-        res.json({ message: 'Vehicle assigned successfully', trip: result.trip, vehicle: result.vehicle });
-    } else {
-        res.status(500).json({ message: result.error });
+
+        res.status(201).json(trip);
+    } catch (error) {
+        console.error('Create trip error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// PUT update trip
+router.put('/:id', authenticate, authorize('admin', 'dispatcher'), async (req, res) => {
+    try {
+        const trip = await Trip.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+            runValidators: true,
+        });
+        if (!trip) {
+            return res.status(404).json({ message: 'Trip not found' });
+        }
+
+        // Emit socket event
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('trip_update', { type: 'update', trip });
+        }
+
+        res.json(trip);
+    } catch (error) {
+        console.error('Update trip error:', error);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
 // PATCH mark trip as completed (COA)
-router.patch('/:id/complete', (req, res) => {
-    const { id } = req.params;
-    const trip = mockData.trips.find(t => t.id === id);
-
-    if (!trip) {
-        return res.status(404).json({ message: 'Trip not found' });
-    }
-
-    trip.status = 'completed';
-    trip.completed_at = new Date().toISOString();
-
-    // Free up the vehicle
-    const io = req.app.get('io');
-    if (trip.vehicle_id) {
-        const vehicle = mockData.vehicles.find(v => v.id === trip.vehicle_id);
-        if (vehicle) {
-            vehicle.status = 'empty';
-            if (io) {
-                io.emit('vehicle_update', { type: 'update', vehicle });
-            }
+router.patch('/:id/complete', authenticate, async (req, res) => {
+    try {
+        const trip = await Trip.findById(req.params.id).populate('vehicle').populate('driver');
+        if (!trip) {
+            return res.status(404).json({ message: 'Trip not found' });
         }
-    }
 
-    if (io) {
-        io.emit('trip_update', { type: 'update', trip });
-    }
+        trip.status = 'completed';
+        trip.actualEnd = new Date();
+        trip.actualDuration = trip.actualStart
+            ? Math.floor((trip.actualEnd - trip.actualStart) / 60000)
+            : null;
+        await trip.save();
 
-    res.json({ message: 'Trip completed', trip });
+        // Free up the vehicle and driver
+        if (trip.vehicle) {
+            const vehicle = await Vehicle.findById(trip.vehicle._id);
+            vehicle.status = 'idle';
+            await vehicle.save();
+        }
+
+        if (trip.driver) {
+            const driver = await Driver.findById(trip.driver._id);
+            driver.status = 'available';
+            driver.totalTrips += 1;
+            await driver.save();
+        }
+
+        // Emit socket events
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('trip_update', { type: 'update', trip });
+        }
+
+        res.json({ message: 'Trip completed', trip });
+    } catch (error) {
+        console.error('Complete trip error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
 });
 
 export default router;

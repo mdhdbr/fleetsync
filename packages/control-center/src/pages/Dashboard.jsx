@@ -1,28 +1,31 @@
 import { useEffect, useState } from 'react';
-
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
 import axios from 'axios';
 import io from 'socket.io-client';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import MapView from '../components/MapView';
 import TimelineSlider from '../components/TimelineSlider';
 import TripCreateModal from '../components/TripCreateModal';
 import DispatcherJobQueue from '../components/DispatcherJobQueue';
 import BookTruckModal from '../components/BookTruckModal';
 import AlertsWidget from '../components/AlertsWidget';
+import Layout from '../components/Layout';
 
 const Dashboard = () => {
     const navigate = useNavigate();
-    const { user, logout } = useAuth();
     const [vehicles, setVehicles] = useState([]);
     const [warehouses, setWarehouses] = useState([]);
     const [telemetryEvents, setTelemetryEvents] = useState([]);
     const [trips, setTrips] = useState([]);
-    const [shipments, setShipments] = useState([]);
     const [currentTime, setCurrentTime] = useState(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isBookTruckModalOpen, setIsBookTruckModalOpen] = useState(false);
-    const [fatigueAlert, setFatigueAlert] = useState(null);
+    const [stats, setStats] = useState({
+        activeVehicles: 0,
+        tripsToday: 0,
+        activeAlerts: 0,
+        totalRevenue: 0,
+    });
 
     useEffect(() => {
         // Fetch initial data
@@ -41,7 +44,7 @@ const Dashboard = () => {
         socket.on('trip_update', (data) => {
             console.log('Trip update:', data);
             fetchTrips();
-            fetchVehicles(); // Vehicle status might change
+            fetchVehicles();
         });
 
         socket.on('vehicle_update', (data) => {
@@ -54,9 +57,29 @@ const Dashboard = () => {
         };
     }, []);
 
+    useEffect(() => {
+        // Calculate stats when data changes
+        const activeVehicles = vehicles.filter((v) => v.status === 'active').length;
+        const tripsToday = trips.filter((t) => {
+            const today = new Date().toDateString();
+            const tripDate = new Date(t.createdAt).toDateString();
+            return today === tripDate;
+        }).length;
+        const totalRevenue = trips.reduce((sum, t) => sum + (t.revenue || 0), 0);
+
+        setStats({
+            activeVehicles,
+            tripsToday,
+            activeAlerts: 0, // Will be updated when alerts are fetched
+            totalRevenue,
+        });
+    }, [vehicles, trips]);
+
     const fetchVehicles = async () => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/vehicles`);
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/vehicles`
+            );
             setVehicles(response.data);
         } catch (error) {
             console.error('Error fetching vehicles:', error);
@@ -65,7 +88,9 @@ const Dashboard = () => {
 
     const fetchWarehouses = async () => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/warehouses`);
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/warehouses`
+            );
             setWarehouses(response.data);
         } catch (error) {
             console.error('Error fetching warehouses:', error);
@@ -74,7 +99,9 @@ const Dashboard = () => {
 
     const fetchTelemetryEvents = async () => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/telemetry-events`);
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/telemetry-events`
+            );
             setTelemetryEvents(response.data);
         } catch (error) {
             console.error('Error fetching telemetry events:', error);
@@ -83,47 +110,25 @@ const Dashboard = () => {
 
     const fetchTrips = async () => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/trips`);
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/trips`
+            );
             setTrips(response.data);
         } catch (error) {
             console.error('Error fetching trips:', error);
         }
     };
 
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
-    };
-
     return (
-        <div className="min-h-screen bg-slate-100 flex flex-col">
-            {/* Header */}
-            <header className="bg-white shadow-md border-b border-slate-200 z-10">
-                <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-xl text-white">F</div>
-                        <h1 className="text-2xl font-bold text-slate-900">FleetSync Dashboard</h1>
+        <Layout>
+            <div className="p-6 space-y-6">
+                {/* Header */}
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
+                        <p className="text-slate-600 mt-1">Welcome back! Here's your fleet overview.</p>
                     </div>
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => navigate('/analytics')}
-                            className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition font-semibold flex items-center gap-2"
-                        >
-                            📊 Analytics
-                        </button>
-                        <button
-                            onClick={() => navigate('/wms')}
-                            className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition font-semibold flex items-center gap-2"
-                        >
-                            🏭 WMS
-                        </button>
-                        <button
-                            onClick={() => navigate('/alert-settings')}
-                            className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition font-semibold flex items-center gap-2"
-                        >
-                            ⚙️ Alerts
-                        </button>
-                        <div className="h-6 w-px bg-slate-300"></div>
+                    <div className="flex gap-3">
                         <button
                             onClick={() => setIsCreateModalOpen(true)}
                             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold flex items-center gap-2"
@@ -136,23 +141,136 @@ const Dashboard = () => {
                         >
                             <span>🚛</span> Book Truck
                         </button>
-                        <div className="h-6 w-px bg-slate-300"></div>
-                        <span className="text-slate-700">Welcome, {user?.name || 'Admin'}</span>
-                        <button
-                            onClick={handleLogout}
-                            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold"
-                        >
-                            Logout
-                        </button>
                     </div>
                 </div>
-            </header>
 
-            <div className="flex-1 container mx-auto px-6 py-6 overflow-hidden flex flex-col">
-                <div className="grid lg:grid-cols-3 gap-6 h-full">
+                {/* KPI Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="bg-white rounded-xl shadow-lg p-6 border border-slate-100 hover:shadow-xl transition-shadow">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-slate-600 text-sm font-medium">Active Vehicles</p>
+                                <p className="text-3xl font-bold text-slate-900 mt-2">
+                                    {stats.activeVehicles}
+                                </p>
+                                <p className="text-xs text-green-600 mt-1">● Online</p>
+                            </div>
+                            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-2xl shadow-md">
+                                🚗
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-xl shadow-lg p-6 border border-slate-100 hover:shadow-xl transition-shadow">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-slate-600 text-sm font-medium">Trips Today</p>
+                                <p className="text-3xl font-bold text-slate-900 mt-2">{stats.tripsToday}</p>
+                                <p className="text-xs text-blue-600 mt-1">↑ Active</p>
+                            </div>
+                            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center text-2xl shadow-md">
+                                📦
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-xl shadow-lg p-6 border border-slate-100 hover:shadow-xl transition-shadow">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-slate-600 text-sm font-medium">Active Alerts</p>
+                                <p className="text-3xl font-bold text-slate-900 mt-2">
+                                    {stats.activeAlerts}
+                                </p>
+                                <p className="text-xs text-orange-600 mt-1">⚠ Monitoring</p>
+                            </div>
+                            <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center text-2xl shadow-md">
+                                🚨
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-xl shadow-lg p-6 border border-slate-100 hover:shadow-xl transition-shadow">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-slate-600 text-sm font-medium">Total Revenue</p>
+                                <p className="text-3xl font-bold text-slate-900 mt-2">
+                                    SAR {stats.totalRevenue.toLocaleString()}
+                                </p>
+                                <p className="text-xs text-green-600 mt-1">↑ Growing</p>
+                            </div>
+                            <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center text-2xl shadow-md">
+                                💰
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Charts Row */}
+                <div className="grid lg:grid-cols-2 gap-6">
+                    {/* Fleet Status Pie Chart */}
+                    <div className="bg-white rounded-xl shadow-md p-6 border border-slate-200">
+                        <h3 className="text-lg font-bold text-slate-900 mb-4">Fleet Status Distribution</h3>
+                        <ResponsiveContainer width="100%" height={250}>
+                            <PieChart>
+                                <Pie
+                                    data={[
+                                        { name: 'Active', value: vehicles.filter(v => v.status === 'active').length, color: '#10b981' },
+                                        { name: 'Idle', value: vehicles.filter(v => v.status === 'idle').length, color: '#3b82f6' },
+                                        { name: 'Maintenance', value: vehicles.filter(v => v.status === 'maintenance').length, color: '#f59e0b' },
+                                        { name: 'Out of Service', value: vehicles.filter(v => v.status === 'out_of_service').length, color: '#ef4444' },
+                                    ].filter(item => item.value > 0)}
+                                    cx="50%"
+                                    cy="50%"
+                                    labelLine={false}
+                                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                    outerRadius={80}
+                                    fill="#8884d8"
+                                    dataKey="value"
+                                >
+                                    {[
+                                        { name: 'Active', value: vehicles.filter(v => v.status === 'active').length, color: '#10b981' },
+                                        { name: 'Idle', value: vehicles.filter(v => v.status === 'idle').length, color: '#3b82f6' },
+                                        { name: 'Maintenance', value: vehicles.filter(v => v.status === 'maintenance').length, color: '#f59e0b' },
+                                        { name: 'Out of Service', value: vehicles.filter(v => v.status === 'out_of_service').length, color: '#ef4444' },
+                                    ].filter(item => item.value > 0).map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={entry.color} />
+                                    ))}
+                                </Pie>
+                                <Tooltip />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+
+                    {/* Revenue vs Expenses Bar Chart */}
+                    <div className="bg-white rounded-xl shadow-md p-6 border border-slate-200">
+                        <h3 className="text-lg font-bold text-slate-900 mb-4">Revenue vs Expenses</h3>
+                        <ResponsiveContainer width="100%" height={250}>
+                            <BarChart
+                                data={[
+                                    {
+                                        name: 'This Week',
+                                        revenue: trips.reduce((sum, t) => sum + (t.revenue || 0), 0),
+                                        expenses: trips.reduce((sum, t) => sum + (t.expenses || 0), 0),
+                                    },
+                                ]}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="name" />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
+                                <Bar dataKey="revenue" fill="#10b981" name="Revenue" />
+                                <Bar dataKey="expenses" fill="#ef4444" name="Expenses" />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
+                {/* Main Content Grid */}
+                <div className="grid lg:grid-cols-3 gap-6">
                     {/* Left Column: Map & Timeline */}
-                    <div className="lg:col-span-2 flex flex-col gap-4 h-full">
-                        <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-slate-200 flex-1 min-h-[500px] relative">
+                    <div className="lg:col-span-2 flex flex-col gap-4">
+                        <div className="bg-white rounded-xl shadow-xl overflow-hidden border border-slate-200 h-[500px] relative hover:shadow-2xl transition-shadow">
                             <MapView
                                 vehicles={vehicles}
                                 warehouses={warehouses}
@@ -170,7 +288,7 @@ const Dashboard = () => {
                     </div>
 
                     {/* Right Column: Dispatcher Panel & Alerts */}
-                    <div className="h-full flex flex-col gap-6">
+                    <div className="flex flex-col gap-6">
                         <AlertsWidget />
                         <DispatcherJobQueue
                             trips={trips}
@@ -196,12 +314,11 @@ const Dashboard = () => {
                 isOpen={isBookTruckModalOpen}
                 onClose={() => setIsBookTruckModalOpen(false)}
                 onShipmentCreated={() => {
-                    // Refresh data if needed, e.g. fetchShipments()
                     console.log('Shipment created');
                     setIsBookTruckModalOpen(false);
                 }}
             />
-        </div>
+        </Layout>
     );
 };
 

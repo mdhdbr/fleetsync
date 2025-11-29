@@ -1,7 +1,7 @@
 {
     "vehicles": [
         {
-            "id": "veh_1",
+            "id": "KSA-RYD-001",
             "type": "sedan",
             "lat": 24.7136,
             "lng": 46.6753,
@@ -12,7 +12,7 @@
             "needs_maintenance": false
         },
         {
-            "id": "veh_2",
+            "id": "KSA-JED-002",
             "type": "truck",
             "lat": 21.3891,
             "lng": 39.8579,
@@ -23,7 +23,7 @@
             "needs_maintenance": false
         },
         {
-            "id": "veh_3",
+            "id": "KSA-RYD-003",
             "type": "sedan",
             "lat": 24.7500,
             "lng": 46.7000,
@@ -34,7 +34,7 @@
             "needs_maintenance": false
         },
         {
-            "id": "veh_4",
+            "id": "KSA-DAM-004",
             "type": "truck",
             "lat": 26.4367,
             "lng": 50.1039,
@@ -122,68 +122,68 @@
             "dock_id": 1,
             "start_time": "2025-11-28T10:00:00Z",
             "end_time": "2025-11-28T11:00:00Z",
-            "truck_id": "veh_2"
+            "truck_id": "KSA-JED-002"
         }
     ],
     "telemetry_events": [
         {
-            "vehicle_id": "veh_1",
+            "vehicle_id": "KSA-RYD-001",
             "ts": "2025-11-26T08:00:00Z",
             "lat": 24.7000,
             "lng": 46.6700,
             "speed": 40
         },
         {
-            "vehicle_id": "veh_1",
+            "vehicle_id": "KSA-RYD-001",
             "ts": "2025-11-26T08:05:00Z",
             "lat": 24.7100,
             "lng": 46.6800,
             "speed": 35
         },
         {
-            "vehicle_id": "veh_1",
+            "vehicle_id": "KSA-RYD-001",
             "ts": "2025-11-26T08:10:00Z",
             "lat": 24.7136,
             "lng": 46.6753,
             "speed": 0
         },
         {
-            "vehicle_id": "veh_2",
+            "vehicle_id": "KSA-JED-002",
             "ts": "2025-11-26T08:00:00Z",
             "lat": 21.4200,
             "lng": 39.8200,
             "speed": 60
         },
         {
-            "vehicle_id": "veh_2",
+            "vehicle_id": "KSA-JED-002",
             "ts": "2025-11-26T08:05:00Z",
             "lat": 21.4100,
             "lng": 39.8400,
             "speed": 55
         },
         {
-            "vehicle_id": "veh_2",
+            "vehicle_id": "KSA-JED-002",
             "ts": "2025-11-26T08:10:00Z",
             "lat": 21.3891,
             "lng": 39.8579,
             "speed": 0
         },
         {
-            "vehicle_id": "veh_3",
+            "vehicle_id": "KSA-RYD-003",
             "ts": "2025-11-26T08:00:00Z",
             "lat": 24.7400,
             "lng": 46.6900,
             "speed": 45
         },
         {
-            "vehicle_id": "veh_3",
+            "vehicle_id": "KSA-RYD-003",
             "ts": "2025-11-26T08:05:00Z",
             "lat": 24.7450,
             "lng": 46.6950,
             "speed": 40
         },
         {
-            "vehicle_id": "veh_3",
+            "vehicle_id": "KSA-RYD-003",
             "ts": "2025-11-26T08:10:00Z",
             "lat": 24.7500,
             "lng": 46.7000,
@@ -197,7 +197,7 @@
             "type": "speeding",
             "severity": "high",
             "message": "Vehicle exceeded speed limit: 135 km/h in 120 km/h zone",
-            "vehicle_id": "veh_2",
+            "vehicle_id": "KSA-JED-002",
             "status": "active",
             "created_at": "2025-11-28T09:15:00Z",
             "metadata": {
@@ -211,7 +211,7 @@
             "type": "fatigue",
             "severity": "critical",
             "message": "Driver has exceeded maximum working hours (11.5 hours)",
-            "vehicle_id": "veh_1",
+            "vehicle_id": "KSA-RYD-001",
             "status": "active",
             "created_at": "2025-11-28T08:30:00Z",
             "metadata": {
@@ -225,7 +225,7 @@
             "type": "route_deviation",
             "severity": "medium",
             "message": "Vehicle deviated from planned route by 5.2 km",
-            "vehicle_id": "veh_3",
+            "vehicle_id": "KSA-RYD-003",
             "status": "acknowledged",
             "created_at": "2025-11-28T07:45:00Z",
             "acknowledged_by": "dispatcher_01",
@@ -239,7 +239,7 @@
             "type": "maintenance",
             "severity": "high",
             "message": "Vehicle requires immediate maintenance check",
-            "vehicle_id": "veh_4",
+            "vehicle_id": "KSA-DAM-004",
             "status": "active",
             "created_at": "2025-11-28T06:00:00Z",
             "metadata": {
@@ -251,7 +251,7 @@
             "type": "fuel_low",
             "severity": "medium",
             "message": "Fuel level critically low: 15%",
-            "vehicle_id": "veh_4",
+            "vehicle_id": "KSA-DAM-004",
             "status": "active",
             "created_at": "2025-11-28T09:00:00Z",
             "metadata": {

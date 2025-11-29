@@ -3,7 +3,8 @@ const router = express.Router();
 
 const users = [
   { id: 1, username: 'dispatcher', password: '1234', role: 'dispatcher' },
-  { id: 2, username: 'driver1', password: '1234', role: 'driver', driverId: 101 }
+  { id: 2, username: 'driver1', password: '1234', role: 'driver', driverId: 101 },
+  { id: 3, username: 'admin', password: 'password', role: 'admin' }
 ];
 
 router.post('/login', (req, res) => {
@@ -17,11 +18,17 @@ router.post('/login', (req, res) => {
     return res.status(401).json({ message: 'Invalid credentials' });
   }
 
+  // Generate a mock token (in production, use JWT)
+  const token = `mock_token_${user.id}_${Date.now()}`;
+
   res.json({
-    id: user.id,
-    username: user.username,
-    role: user.role,
-    driverId: user.driverId || null
+    user: {
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      driverId: user.driverId || null
+    },
+    token
   });
 });
 

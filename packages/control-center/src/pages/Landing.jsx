@@ -250,7 +250,8 @@ const Landing = () => {
                         </div>
                     </div>
                     <div className="pt-8 border-t border-slate-900 text-center text-slate-600 text-sm">
-                        © {new Date().getFullYear()} FleetSync. All rights reserved.
+                        <p>© {new Date().getFullYear()} FleetSync. All rights reserved.</p>
+                        <p className="mt-2 text-xs">Serving Saudi Arabia - Riyadh, Jeddah, Dammam, Mecca, and Medina</p>
                     </div>
                 </div>
             </footer>

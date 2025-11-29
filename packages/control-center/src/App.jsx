@@ -9,6 +9,8 @@ import WMS from './pages/WMS';
 import ShipperPortal from './pages/ShipperPortal';
 import Analytics from './pages/Analytics';
 import AlertSettings from './pages/AlertSettings';
+import Vehicles from './pages/Vehicles';
+import Drivers from './pages/Drivers';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -40,6 +42,22 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['admin']}>
                   <Analytics />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/vehicles"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'dispatcher']}>
+                  <Vehicles />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/drivers"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'dispatcher']}>
+                  <Drivers />
                 </ProtectedRoute>
               }
             />

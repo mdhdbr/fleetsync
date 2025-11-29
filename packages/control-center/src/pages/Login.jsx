@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const Login = () => {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -16,7 +16,7 @@ const Login = () => {
         e.preventDefault();
         setError('');
 
-        const result = await login(username, password);
+        const result = await login(email, password);
 
         if (result.success) {
             navigate(from, { replace: true });
@@ -43,16 +43,16 @@ const Login = () => {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                            Username
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                            Email
                         </label>
                         <input
-                            id="username"
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                            placeholder="admin"
+                            placeholder="admin@fleetsync.com"
                             required
                         />
                     </div>
@@ -81,8 +81,8 @@ const Login = () => {
                 </form>
 
                 <div className="mt-6 text-center text-sm text-gray-600 space-y-1">
-                    <p>Admin: admin / pass</p>
-                    <p>Driver: driver / pass</p>
+                    <p>Admin: admin@fleetsync.com / password123</p>
+                    <p>Driver: ahmed@fleetsync.com / password123</p>
                 </div>
             </div>
         </div>

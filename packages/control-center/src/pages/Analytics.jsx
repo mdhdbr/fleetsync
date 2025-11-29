@@ -1,11 +1,3 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
-
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
-
 export default function Analytics() {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -60,18 +52,16 @@ export default function Analytics() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 font-sans">
-            {/* Header */}
-            <header className="bg-white shadow border-b border-slate-200">
-                <div className="container mx-auto px-6 py-4">
-                    <h1 className="text-2xl font-bold text-slate-800">Analytics Dashboard</h1>
-                    <p className="text-slate-500 text-sm">Fleet performance metrics and insights</p>
+        <Layout>
+            <div className="p-6 space-y-6">
+                {/* Header */}
+                <div>
+                    <h1 className="text-3xl font-bold text-slate-900">Analytics Dashboard</h1>
+                    <p className="text-slate-600 mt-1">Fleet performance metrics and insights</p>
                 </div>
-            </header>
 
-            <main className="container mx-auto px-6 py-8">
                 {/* KPI Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
                         <p className="text-slate-500 text-sm font-medium uppercase mb-2">Active Vehicles</p>
                         <p className="text-3xl font-bold text-blue-600">{kpis.activeVehicles}</p>
@@ -95,7 +85,7 @@ export default function Analytics() {
                 </div>
 
                 {/* Charts Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Utilization Chart */}
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
                         <div className="flex justify-between items-center mb-4">
@@ -204,12 +194,12 @@ export default function Analytics() {
                             <p className="text-sm text-slate-500 mt-1">Revenue, costs, and profitability</p>
                         </button>
                         <button className="p-4 border border-slate-200 rounded-lg hover:bg-slate-50 text-left">
-                            <h4 className="font-semibold text-slate-800">Fleet Performance</h4>
+                            <h4 className="font-semibold text-slate-800">Fleet Report</h4>
                             <p className="text-sm text-slate-500 mt-1">Vehicle stats and maintenance</p>
                         </button>
                     </div>
                 </div>
-            </main>
-        </div>
+            </div>
+        </Layout>
     );
 }
