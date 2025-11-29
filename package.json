@@ -10,7 +10,8 @@
     "build": "npm run build --workspaces",
     "lint": "npm run lint --workspaces",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
-    "prepare": "husky install || echo \"Husky not installed\""
+    "prepare": "is-ci || husky install""
+
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
