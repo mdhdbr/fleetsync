@@ -10,7 +10,6 @@
     "build": "npm run build --workspaces",
     "lint": "npm run lint --workspaces",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
-    // FIXED: Disable husky + is-ci completely on Vercel
     "prepare": "node -e \"process.exit(0)\""
   },
   "devDependencies": {
