@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         loadingScreen.classList.add('hidden');
         app.classList.remove('hidden');
-        
+
         // Handle initial hash or default to dashboard
         handleNavigation();
     }, 1500);
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleNavigation() {
         const hash = window.location.hash.slice(1) || 'dashboard';
-        
+
         // Update Nav Items
         navItems.forEach(item => {
             if (item.dataset.page === hash) {
@@ -42,9 +42,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Update Header
         const title = hash.charAt(0).toUpperCase() + hash.slice(1);
-        pageTitle.textContent = title === 'Ridesync' ? 'RideSync' : 
-                              title === 'Logisync' ? 'LogiSync' : title;
+        pageTitle.textContent = title === 'Ridesync' ? 'RideSync' :
+            title === 'Logisync' ? 'LogiSync' : title;
         breadcrumbCurrent.textContent = pageTitle.textContent;
+
+        // Refresh map if it exists (fix for Leaflet rendering in hidden tabs)
+        if (window.FleetSyncMap && typeof window.FleetSyncMap.refresh === 'function') {
+            setTimeout(() => {
+                window.FleetSyncMap.refresh();
+            }, 100);
+        }
     }
 
     // Add click handlers for nav items to ensure smooth transitions
@@ -57,11 +64,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Search functionality (Mock)
     const searchInput = document.querySelector('.search-box input');
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            alert(`Searching for: ${searchInput.value}\n(Search functionality coming soon)`);
-        }
-    });
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                alert(`Searching for: ${searchInput.value}\n(Search functionality coming soon)`);
+            }
+        });
+    }
 
     // Quick Action Buttons (Mock)
     const actionBtns = document.querySelectorAll('.action-btn');
