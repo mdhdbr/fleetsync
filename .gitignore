@@ -1,10 +1,4 @@
-node_modules
-dist
-build
-.env
-.env.local
-*.log
+node_modules/
 .DS_Store
-coverage
-.vscode
-.idea
+.vscode/
+*.log
