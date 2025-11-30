@@ -1,15 +1,15 @@
 {
-    "buildCommand": "npm install && cd packages/control-center && npm run build",
-    "outputDirectory": "packages/control-center/dist",
-    "installCommand": "npm install",
-    "framework": null,
-    "routes": [
-        {
-            "handle": "filesystem"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/index.html"
-        }
-    ]
+  "buildCommand": "npm install && npm run build -w @fleetsync/control-center",
+  "outputDirectory": "packages/control-center/dist",
+  "installCommand": "npm install",
+  "framework": null,
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
 }
