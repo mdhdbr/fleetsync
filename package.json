@@ -1,0 +1,23 @@
+{
+  "name": "fleetsync",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build -ws",
+    "dev": "npm run dev --workspaces --if-present",
+    "start": "npm run start -ws",
+    "typecheck": "npm run typecheck -ws",
+    "start:ui": "npm --workspace control-center run dev",
+    "start:api": "npm --workspace api run dev",
+    "dev:all": "concurrently -n api,ui \"npm --workspace api run dev\" \"npm --workspace control-center run dev\"",
+    "ci:typecheck": "npm run typecheck -ws",
+    "ci:build": "npm run build -ws"
+  }
+  ,
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}

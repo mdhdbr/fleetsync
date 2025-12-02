@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MHB Transport Pro — Integrated Passenger & Logistics Operations</title>
+  <meta name="description"
+    content="Unified passenger transport and road logistics command platform for Tamil Nadu & Saudi Arabia corridors">
+
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+  <div class="app-wrapper">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo-icon">
+          <i class="fas fa-truck-moving"></i>
+        </div>
+        <div class="brand-info">
+          <h1>MHB Transport Pro</h1>
+          <div class="tagline">Integrated Passenger & Logistics Operations</div>
+        </div>
+      </div>
+
+      <nav class="main-nav">
+        <button class="nav-btn active" data-section="business" onclick="switchSection('business')">
+          <i class="fas fa-briefcase"></i>
+          <span>Business Plan</span>
+        </button>
+        <button class="nav-btn" data-section="driver" onclick="switchSection('driver')">
+          <i class="fas fa-mobile-alt"></i>
+          <span>Driver App</span>
+        </button>
+        <button class="nav-btn" data-section="control" onclick="switchSection('control')">
+          <i class="fas fa-desktop"></i>
+          <span>Control Center</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-main">
+
+      <!-- BUSINESS PLAN SECTION -->
+      <section id="business-section" class="content-section active">
+        <div class="business-plan-container">
+          <div class="bp-header">
+            <h2>Executive Summary</h2>
+            <div class="bp-meta">
+              <span><i class="fas fa-map-marker-alt"></i> Tamil Nadu & Saudi Arabia</span>
+              <span><i class="fas fa-calendar"></i> 2025 Strategic Plan</span>
+            </div>
+          </div>
+
+          <div class="bp-content">
+            <!-- Vision -->
+            <div class="bp-section">
+              <h3><i class="fas fa-eye"></i> Vision & Value Proposition</h3>
+              <p>Build a unified digital road logistics network connecting vehicle owners, drivers, warehouses, ports,
+                roadside service vendors, mobile fueling operators, and businesses requiring freight & passenger
+                transport across Tamil Nadu and Saudi Arabia corridors.</p>
+
+              <div class="value-props">
+                <div class="value-card">
+                  <i class="fas fa-chart-line"></i>
+                  <h4>100% Productivity</h4>
+                  <p>Eliminate dead mileage through intelligent job allocation</p>
+                </div>
+                <div class="value-card">
+                  <i class="fas fa-bolt"></i>
+                  <h4>Real-Time Operations</h4>
+                  <p>Live tracking of 1,000+ vehicles with instant dispatch</p>
+                </div>
+                <div class="value-card">
+                  <i class="fas fa-users"></i>
+                  <h4>Unified Platform</h4>
+                  <p>Single system for passengers, logistics & mobile services</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Key Features -->
+            <div class="bp-section">
+              <h3><i class="fas fa-star"></i> Key Features</h3>
+              <div class="features-grid">
+                <div class="feature-item">
+                  <i class="fas fa-car"></i>
+                  <h4>Passenger Transport</h4>
+                  <ul>
+                    <li>Luxury Sedan, MPV, SUV, VVIP vehicles</li>
+                    <li>Staff bus scheduling</li>
+                    <li>OTP-based pickup verification</li>
+                    <li>Passenger addons (wheelchair, baby seat, etc.)</li>
+                  </ul>
+                </div>
+                <div class="feature-item">
+                  <i class="fas fa-truck"></i>
+                  <h4>Road Logistics</h4>
+                  <ul>
+                    <li>Crane trailers & container carriers</li>
+                    <li>Low-bed trucks & mini-wagons</li>
+                    <li>Luggage transport services</li>
+                    <li>Real-time load tracking</li>
+                  </ul>
+                </div>
+                <div class="feature-item">
+                  <i class="fas fa-tools"></i>
+                  <h4>Mobile Services</h4>
+                  <ul>
+                    <li>Mobile fuel delivery</li>
+                    <li>On-site tyre services</li>
+                    <li>Mobile mechanics</li>
+                    <li>Vendor marketplace with ratings</li>
+                  </ul>
+                </div>
+                <div class="feature-item">
+                  <i class="fas fa-clipboard-check"></i>
+                  <h4>Driver Safety</h4>
+                  <ul>
+                    <li>iAuditor-style pre-trip checks</li>
+                    <li>Fatigue monitoring & alerts</li>
+                    <li>Incident reporting system</li>
+                    <li>Digital vehicle inspections</li>
+                  </ul>
+                </div>
+                <div class="feature-item">
+                  <i class="fas fa-file-contract"></i>
+                  <h4>Compliance</h4>
+                  <ul>
+                    <li>Vehicle renewal tracking</li>
+                    <li>License & insurance management</li>
+                    <li>Driver training modules</li>
+                    <li>Document lifecycle automation</li>
+                  </ul>
+                </div>
+                <div class="feature-item">
+                  <i class="fas fa-chart-bar"></i>
+                  <h4>Business Intelligence</h4>
+                  <ul>
+                    <li>Real-time KPI dashboards</li>
+                    <li>Utilization analytics</li>
+                    <li>Empty-km reduction metrics</li>
+                    <li>PPT/PDF export ready</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Capacity & Scale -->
+            <div class="bp-section">
+              <h3><i class="fas fa-server"></i> Capacity & Scale</h3>
+              <div class="capacity-stats">
+                <div class="stat-box">
+                  <div class="stat-value">500+</div>
+                  <div class="stat-label">Car Transactions/Day</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-value">1,000+</div>
+                  <div class="stat-label">Vehicles Tracked</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-value">24/7</div>
+                  <div class="stat-label">Operations Support</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-value">2</div>
+                  <div class="stat-label">Major Corridors</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Technology Stack -->
+            <div class="bp-section">
+              <h3><i class="fas fa-code"></i> Technology Stack</h3>
+              <div class="tech-grid">
+                <div class="tech-item">
+                  <strong>Frontend:</strong> React 18 + TypeScript + Vite
+                </div>
+                <div class="tech-item">
+                  <strong>Backend:</strong> Node.js + Express + PostgreSQL
+                </div>
+                <div class="tech-item">
+                  <strong>Real-time:</strong> WebSocket (Socket.IO)
+                </div>
+                <div class="tech-item">
+                  <strong>Mapping:</strong> Mapbox / Google Maps
+                </div>
+                <div class="tech-item">
+                  <strong>Mobile:</strong> Progressive Web App (PWA)
+                </div>
+                <div class="tech-item">
+                  <strong>Analytics:</strong> Redis + Time-series DB
+                </div>
+              </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="bp-cta">
+              <h3>Ready to Transform Your Operations?</h3>
+              <div class="cta-buttons">
+                <button class="btn-primary" onclick="switchSection('driver')">
+                  <i class="fas fa-mobile-alt"></i> Preview Driver App
+                </button>
+                <button class="btn-primary" onclick="switchSection('control')">
+                  <i class="fas fa-desktop"></i> Open Control Center
+                </button>
+                <button class="btn-secondary"
+                  onclick="alert('PPT/PDF export feature: Specify slide count or template preference.')">
+                  <i class="fas fa-file-powerpoint"></i> Request PPT/PDF
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DRIVER APP SECTION -->
+      <section id="driver-section" class="content-section">
+        <div class="device-preview">
+          <div class="device-frame">
+            <div class="device-screen" id="driver-screen">
+              <!-- Driver Login Screen (Initial) -->
+              <div class="driver-view" id="driver-login">
+                <div class="driver-header">
+                  <h2>Driver Login</h2>
+                  <p>Enter your credentials to start your shift</p>
+                </div>
+                <div class="login-form">
+                  <div class="form-group">
+                    <label><i class="fas fa-phone"></i> Phone Number</label>
+                    <input type="tel" id="driver-phone" placeholder="+966 5XX XXX XXX" value="+966 501234567">
+                  </div>
+                  <div class="form-group">
+                    <label><i class="fas fa-id-card"></i> Driver ID</label>
+                    <input type="text" id="driver-id" placeholder="DL-XXX" value="DL-445">
+                  </div>
+                  <button class="btn-primary btn-block" onclick="driverLogin()">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                  </button>
+                </div>
+              </div>
+
+              <!-- Driver Dashboard (After Login) -->
+              <div class="driver-view" id="driver-dashboard" style="display: none;">
+                <div class="driver-header">
+                  <div class="driver-info">
+                    <div class="driver-avatar">
+                      <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                      <h3 id="driver-name">Ahmed</h3>
+                      <div class="driver-rating">
+                        <i class="fas fa-star"></i> 4.7
+                      </div>
+                    </div>
+                  </div>
+                  <button class="duty-toggle" id="duty-status" onclick="toggleDuty()">
+                    <i class="fas fa-power-off"></i>
+                    <span>Go Online</span>
+                  </button>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                  <button class="action-btn" onclick="showPreTripChecklist()">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span>Pre-Trip Check</span>
+                  </button>
+                  <button class="action-btn" onclick="showIncidentReport()">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Report Incident</span>
+                  </button>
+                  <button class="action-btn" onclick="requestMobileService('fuel')">
+                    <i class="fas fa-gas-pump"></i>
+                    <span>Request Fuel</span>
+                  </button>
+                  <button class="action-btn" onclick="requestMobileService('mechanic')">
+                    <i class="fas fa-wrench"></i>
+                    <span>Mechanic</span>
+                  </button>
+                </div>
+
+                <!-- Next Job Card -->
+                <div class="job-card next-job" id="next-job-card" style="display: none;">
+                  <div class="job-header">
+                    <h4><i class="fas fa-briefcase"></i> Next Job</h4>
+                    <span class="job-badge">ASSIGNED</span>
+                  </div>
+                  <div class="job-details">
+                    <div class="job-info">
+                      <i class="fas fa-map-marker-alt"></i>
+                      <div>
+                        <strong>Pickup:</strong> King Fahd Road, Riyadh
+                      </div>
+                    </div>
+                    <div class="job-info">
+                      <i class="fas fa-flag-checkered"></i>
+                      <div>
+                        <strong>Dropoff:</strong> King Abdullah Financial District
+                      </div>
+                    </div>
+                    <div class="job-stats">
+                      <div class="stat">
+                        <i class="fas fa-clock"></i> 12 min
+                      </div>
+                      <div class="stat">
+                        <i class="fas fa-road"></i> 8.5 km
+                      </div>
+                      <div class="stat">
+                        <i class="fas fa-users"></i> 3 pax
+                      </div>
+                    </div>
+                  </div>
+                  <div class="job-actions">
+                    <button class="btn-success" onclick="acceptJob()">
+                      <i class="fas fa-check"></i> Accept Job
+                    </button>
+                    <button class="btn-danger" onclick="rejectJob()">
+                      <i class="fas fa-times"></i> Reject
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Active Job Card -->
+                <div class="job-card active-job" id="active-job-card" style="display: none;">
+                  <div class="job-header">
+                    <h4><i class="fas fa-car"></i> Active Trip</h4>
+                    <span class="job-badge status-in-progress">IN PROGRESS</span>
+                  </div>
+                  <div class="job-details">
+                    <div class="trip-progress">
+                      <div class="progress-step completed">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Accepted</span>
+                      </div>
+                      <div class="progress-step active" id="trip-step-2">
+                        <i class="fas fa-circle"></i>
+                        <span>En Route</span>
+                      </div>
+                      <div class="progress-step" id="trip-step-3">
+                        <i class="fas fa-circle"></i>
+                        <span>Arrived</span>
+                      </div>
+                      <div class="progress-step" id="trip-step-4">
+                        <i class="fas fa-circle"></i>
+                        <span>Complete</span>
+                      </div>
+                    </div>
+                    <div class="job-info">
+                      <i class="fas fa-user"></i>
+                      <div>
+                        <strong>Passenger:</strong> Mohammed Al-Rashid
+                      </div>
+                    </div>
+                    <div class="job-info">
+                      <i class="fas fa-phone"></i>
+                      <div>+966 50 XXX XXXX</div>
+                    </div>
+                  </div>
+                  <div class="job-actions">
+                    <button class="btn-primary" id="trip-action-btn" onclick="startTrip()">
+                      <i class="fas fa-play"></i> Start Trip
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Job List -->
+                <div class="jobs-list">
+                  <h4><i class="fas fa-list"></i> My Jobs</h4>
+                  <div class="job-item">
+                    <div class="job-item-header">
+                      <span class="job-id">#JOB-20251202-001</span>
+                      <span class="job-badge status-pending">PENDING</span>
+                    </div>
+                    <div class="job-item-details">
+                      <div><i class="fas fa-car"></i> Premium Sedan</div>
+                      <div><i class="fas fa-clock"></i> 05:30 AM</div>
+                    </div>
+                  </div>
+                  <div class="job-item">
+                    <div class="job-item-header">
+                      <span class="job-id">#JOB-20251201-089</span>
+                      <span class="job-badge status-completed">COMPLETED</span>
+                    </div>
+                    <div class="job-item-details">
+                      <div><i class="fas fa-users"></i> 3 passengers</div>
+                      <div><i class="fas fa-check"></i> Yesterday</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Fatigue Timer -->
+                <div class="fatigue-monitor">
+                  <div class="fatigue-header">
+                    <i class="fas fa-hourglass-half"></i>
+                    <span>Duty Hours: <strong id="duty-hours">0h 0m</strong></span>
+                  </div>
+                  <div class="fatigue-bar">
+                    <div class="fatigue-progress" id="fatigue-progress" style="width: 0%"></div>
+                  </div>
+                  <div class="fatigue-warning" id="fatigue-warning" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Approaching 10-hour limit. Rest break required soon.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTROL CENTER SECTION -->
+      <section id="control-section" class="content-section">
+        <div class="control-center">
+          <!-- Stats Dashboard -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon blue">
+                <i class="fas fa-car"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="active-vehicles">127</div>
+                <div class="stat-label">Active Vehicles</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon green">
+                <i class="fas fa-briefcase"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="pending-jobs">23</div>
+                <div class="stat-label">Pending Jobs</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon orange">
+                <i class="fas fa-tools"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="mobile-services">8</div>
+                <div class="stat-label">Mobile Service Requests</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon red">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="active-alerts">3</div>
+                <div class="stat-label">Active Alerts</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon purple">
+                <i class="fas fa-cloud-rain"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="weather-alerts">2</div>
+                <div class="stat-label">Weather Alerts</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Control Panel -->
+          <div class="control-panel">
+            <!-- Left: Map & Tracking -->
+            <div class="panel-left">
+              <div class="panel-card">
+                <div class="panel-header">
+                  <h3><i class="fas fa-map"></i> Live Fleet Tracking</h3>
+                  <div class="panel-controls">
+                    <button class="control-btn" onclick="toggleWeatherOverlay()">
+                      <i class="fas fa-cloud-sun-rain"></i> Weather
+                    </button>
+                    <button class="control-btn" onclick="refreshMap()">
+                      <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                  </div>
+                </div>
+                <div class="map-container" id="map-container">
+                  <!-- Map Placeholder - In production, integrate Mapbox or Google Maps -->
+                  <div class="map-placeholder">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <p>Map Integration Placeholder</p>
+                    <small>Connect Mapbox or Google Maps API in production</small>
+                  </div>
+
+                  <!-- Vehicle Markers Simulation -->
+                  <div class="vehicle-markers">
+                    <div class="vehicle-marker online" style="top: 30%; left: 40%;"
+                      onclick="showVehicleDetails('KSA-12345')">
+                      <i class="fas fa-car"></i>
+                    </div>
+                    <div class="vehicle-marker enroute" style="top: 50%; left: 60%;"
+                      onclick="showVehicleDetails('KSA-67890')">
+                      <i class="fas fa-truck"></i>
+                    </div>
+                    <div class="vehicle-marker idle" style="top: 70%; left: 30%;"
+                      onclick="showVehicleDetails('TN-11223')">
+                      <i class="fas fa-car"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Map Legend -->
+                <div class="map-legend">
+                  <div class="legend-item">
+                    <span class="legend-dot online"></span> Online / Available
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-dot enroute"></span> En Route / POB
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-dot idle"></span> Idle / Break
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-dot maintenance"></span> Maintenance
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-dot weather"></span> Weather Impact
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-dot incident"></span> Road Incident
+                  </div>
+                </div>
+              </div>
+
+              <!-- Vehicle Registry -->
+              <div class="panel-card">
+                <div class="panel-header">
+                  <h3><i class="fas fa-list"></i> Vehicle Registry</h3>
+                  <div class="panel-controls">
+                    <input type="text" class="search-input" placeholder="Search vehicles..." id="vehicle-search">
+                    <button class="control-btn" onclick="exportVehicles()">
+                      <i class="fas fa-download"></i> Export
+                    </button>
+                  </div>
+                </div>
+                <div class="table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Vehicle ID</th>
+                        <th>Type</th>
+                        <th>Driver</th>
+                        <th>Status</th>
+                        <th>Location</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="vehicle-table-body">
+                      <tr>
+                        <td>KSA-12345</td>
+                        <td><i class="fas fa-truck"></i> Crane Trailer</td>
+                        <td>Ahmed</td>
+                        <td><span class="status-badge online">En Route</span></td>
+                        <td>Riyadh - King Fahd Rd</td>
+                        <td>
+                          <button class="icon-btn" onclick="showVehicleDetails('KSA-12345')">
+                            <i class="fas fa-eye"></i>
+                          </button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>KSA-67890</td>
+                        <td><i class="fas fa-car"></i> Premium Sedan</td>
+                        <td>Mohammed</td>
+                        <td><span class="status-badge idle">Idle</span></td>
+                        <td>Jeddah - Al Hamra</td>
+                        <td>
+                          <button class="icon-btn" onclick="showVehicleDetails('KSA-67890')">
+                            <i class="fas fa-eye"></i>
+                          </button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>TN-11223</td>
+                        <td><i class="fas fa-shuttle-van"></i> MPV</td>
+                        <td>Rajesh</td>
+                        <td><span class="status-badge online">Available</span></td>
+                        <td>Chennai - Anna Nagar</td>
+                        <td>
+                          <button class="icon-btn" onclick="showVehicleDetails('TN-11223')">
+                            <i class="fas fa-eye"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Alerts & Services -->
+            <div class="panel-right">
+              <!-- Weather & Road Conditions -->
+              <div class="panel-card">
+                <div class="panel-header">
+                  <h3><i class="fas fa-cloud-sun-rain"></i> Operational Conditions</h3>
+                </div>
+                <div class="conditions-grid">
+                  <div class="condition-col">
+                    <h4>Live Weather Forecast</h4>
+                    <div class="weather-current">
+                      <i class="fas fa-sun weather-icon"></i>
+                      <div class="weather-temp">32°C</div>
+                      <div class="weather-desc">Clear Sky</div>
+                    </div>
+                    <div class="weather-forecast">
+                      <div class="forecast-day">
+                        <div>Mon</div>
+                        <i class="fas fa-cloud-rain"></i>
+                        <div>30°/23°</div>
+                      </div>
+                      <div class="forecast-day">
+                        <div>Tue</div>
+                        <i class="fas fa-cloud"></i>
+                        <div>31°/24°</div>
+                      </div>
+                      <div class="forecast-day">
+                        <div>Wed</div>
+                        <i class="fas fa-sun"></i>
+                        <div>33°/25°</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="condition-col">
+                    <h4>Active Road Incidents</h4>
+                    <div class="incidents-list">
+                      <div class="incident-item" onclick="showIncidentDetails(17)">
+                        <div class="incident-header">
+                          <i class="fas fa-car-crash"></i>
+                          <span class="severity-badge high">High</span>
+                        </div>
+                        <div class="incident-title">Accident - King Fahd Road</div>
+                        <div class="incident-desc">Multi-vehicle collision causing major congestion</div>
+                      </div>
+                      <div class="incident-item" onclick="showIncidentDetails(18)">
+                        <div class="incident-header">
+                          <i class="fas fa-road"></i>
+                          <span class="severity-badge medium">Medium</span>
+                        </div>
+                        <div class="incident-title">Construction - Highway 40</div>
+                        <div class="incident-desc">Lane closure, expect 15min delays</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Impact Reports Panel -->
+              <div class="panel-card">
+                <div class="panel-header">
+                  <h3><i class="fas fa-chart-line"></i> Impact Reports</h3>
+                </div>
+                <div class="reports-actions">
+                  <button class="btn-primary btn-block" onclick="generateWeatherImpactReport()">
+                    <i class="fas fa-cloud-rain"></i> Weather Impact Report
+                  </button>
+                  <button class="btn-primary btn-block" onclick="generateRoadConditionsReport()">
+                    <i class="fas fa-road"></i> Road Conditions Report
+                  </button>
+                  <div class="report-hint">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Reports include heatmaps, predictive analysis, and fleet recommendations</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Alerts Panel -->
+              <div class="panel-card">
+                <div class="panel-header">
+                  <h3><i class="fas fa-bell"></i> Active Alerts</h3>
+                  <button class="control-btn" onclick="clearAllAlerts()">
+                    <i class="fas fa-check-double"></i> Clear All
+                  </button>
+                </div>
+                <div class="alerts-list" id="alerts-list">
+                  <div class="alert-item alert-warning">
+                    <div class="alert-icon">
+                      <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="alert-content">
+                      <div class="alert-title">Driver Fatigue Warning</div>
+                      <div class="alert-desc">Driver DL-445 approaching 10-hour limit</div>
+                      <div class="alert-time">5 minutes ago</div>
+                    </div>
+                    <button class="alert-action" onclick="acknowledgeAlert(1)">
+                      <i class="fas fa-check"></i>
+                    </button>
+                  </div>
+                  <div class="alert-item alert-danger">
+                    <div class="alert-icon">
+                      <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="alert-content">
+                      <div class="alert-title">Speed Alert</div>
+                      <div class="alert-desc">Vehicle KSA-12345 exceeding 120 km/h</div>
+                      <div class="alert-time">12 minutes ago</div>
+                    </div>
+                    <button class="alert-action" onclick="acknowledgeAlert(2)">
+                      <i class="fas fa-check"></i>
+                    </button>
+                  </div>
+                  <div class="alert-item alert-info">
+                    <div class="alert-icon">
+                      <i class="fas fa-gas-pump"></i>
+                    </div>
+                    <div class="alert-content">
+                      <div class="alert-title">Low Fuel</div>
+                      <div class="alert-desc">Vehicle TN-11223 fuel level at 15%</div>
+                      <div class="alert-time">28 minutes ago</div>
+                    </div>
+                    <button class="alert-action" onclick="acknowledgeAlert(3)">
+                      <i class="fas fa-check"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Mobile Services Panel -->
+              <div class="panel-card">
+                <div class="panel-header">
+                  <h3><i class="fas fa-tools"></i> Mobile Service Vendors</h3>
+                </div>
+                <div class="vendors-list">
+                  <div class="vendor-card">
+                    <div class="vendor-header">
+                      <div class="vendor-icon">
+                        <i class="fas fa-gas-pump"></i>
+                      </div>
+                      <div class="vendor-info">
+                        <h4>Quick Fuel Services</h4>
+                        <div class="vendor-rating">
+                          <i class="fas fa-star"></i> 4.8
+                          <span class="verified"><i class="fas fa-check-circle"></i> Verified</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="vendor-details">
+                      <div class="vendor-stat">
+                        <i class="fas fa-clock"></i> ETA: 22 min
+                      </div>
+                      <div class="vendor-stat">
+                        <i class="fas fa-map-marker-alt"></i> 8.5 km away
+                      </div>
+                    </div>
+                    <button class="btn-primary btn-sm" onclick="requestVendor('VEND-TR72')">
+                      <i class="fas fa-phone"></i> Request Service
+                    </button>
+                  </div>
+                  <div class="vendor-card">
+                    <div class="vendor-header">
+                      <div class="vendor-icon">
+                        <i class="fas fa-wrench"></i>
+                      </div>
+                      <div class="vendor-info">
+                        <h4>Mobile Mechanics Pro</h4>
+                        <div class="vendor-rating">
+                          <i class="fas fa-star"></i> 4.6
+                          <span class="verified"><i class="fas fa-check-circle"></i> Verified</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="vendor-details">
+                      <div class="vendor-stat">
+                        <i class="fas fa-clock"></i> ETA: 35 min
+                      </div>
+                      <div class="vendor-stat">
+                        <i class="fas fa-map-marker-alt"></i> 12.3 km away
+                      </div>
+                    </div>
+                    <button class="btn-primary btn-sm" onclick="requestVendor('VEND-MC45')">
+                      <i class="fas fa-phone"></i> Request Service
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Job Board -->
+              <div class="panel-card">
+                <div class="panel-header">
+                  <h3><i class="fas fa-clipboard-list"></i> Pending Jobs</h3>
+                  <button class="control-btn" onclick="createNewJob()">
+                    <i class="fas fa-plus"></i> New Job
+                  </button>
+                </div>
+                <div class="jobs-board" id="jobs-board">
+                  <div class="job-board-item">
+                    <div class="job-board-header">
+                      <span class="job-id">#JOB-20251202-001</span>
+                      <span class="job-type">Passenger Transfer</span>
+                    </div>
+                    <div class="job-board-details">
+                      <div><i class="fas fa-users"></i> 3 passengers</div>
+                      <div><i class="fas fa-car"></i> Premium Sedan</div>
+                      <div><i class="fas fa-clock"></i> 05:30 AM</div>
+                    </div>
+                    <button class="btn-success btn-sm" onclick="assignJob('JOB-20251202-001')">
+                      <i class="fas fa-user-plus"></i> Assign Driver
+                    </button>
+                  </div>
+                  <div class="job-board-item">
+                    <div class="job-board-header">
+                      <span class="job-id">#JOB-20251202-002</span>
+                      <span class="job-type">Logistics</span>
+                    </div>
+                    <div class="job-board-details">
+                      <div><i class="fas fa-truck"></i> Container Carrier</div>
+                      <div><i class="fas fa-weight-hanging"></i> 18 tons</div>
+                      <div><i class="fas fa-clock"></i> 06:00 AM</div>
+                    </div>
+                    <button class="btn-success btn-sm" onclick="assignJob('JOB-20251202-002')">
+                      <i class="fas fa-user-plus"></i> Assign Driver
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>MHB Transport Pro — Prototype UI v1.0 | Production-ready scaffold for frontend design & pitch materials</p>
+    </footer>
+  </div>
+
+  <!-- MODALS -->
+
+  <!-- Pre-Trip Checklist Modal -->
+  <div class="modal" id="pretrip-modal">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h3><i class="fas fa-clipboard-check"></i> Pre-Trip Safety Checklist</h3>
+        <button class="modal-close" onclick="closeModal('pretrip-modal')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="checklist">
+          <div class="checklist-item">
+            <input type="checkbox" id="check-fire" onchange="updateChecklistProgress()">
+            <label for="check-fire">
+              <i class="fas fa-fire-extinguisher"></i> Fire extinguisher present and accessible
+            </label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="check-firstaid" onchange="updateChecklistProgress()">
+            <label for="check-firstaid">
+              <i class="fas fa-medkit"></i> First aid kit available and stocked
+            </label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="check-tyres" onchange="updateChecklistProgress()">
+            <label for="check-tyres">
+              <i class="fas fa-circle"></i> Tyre pressure and condition checked
+            </label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="check-load" onchange="updateChecklistProgress()">
+            <label for="check-load">
+              <i class="fas fa-box"></i> Load secured properly (if applicable)
+            </label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="check-alcohol" onchange="updateChecklistProgress()">
+            <label for="check-alcohol">
+              <i class="fas fa-ban"></i> Alcohol test passed (mock)
+            </label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="check-clean" onchange="updateChecklistProgress()">
+            <label for="check-clean">
+              <i class="fas fa-broom"></i> Vehicle interior cleaned
+            </label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="check-toolkit" onchange="updateChecklistProgress()">
+            <label for="check-toolkit">
+              <i class="fas fa-toolbox"></i> Emergency toolkit present
+            </label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="check-triangle" onchange="updateChecklistProgress()">
+            <label for="check-triangle">
+              <i class="fas fa-exclamation-triangle"></i> Warning triangle & visibility jacket
+            </label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="check-fuel" onchange="updateChecklistProgress()">
+            <label for="check-fuel">
+              <i class="fas fa-gas-pump"></i> Fuel level adequate for trip
+            </label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="check-dashboard" onchange="updateChecklistProgress()">
+            <label for="check-dashboard">
+              <i class="fas fa-tachometer-alt"></i> Dashboard warning lights checked
+            </label>
+          </div>
+        </div>
+        <div class="checklist-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" id="checklist-progress" style="width: 0%"></div>
+          </div>
+          <div class="progress-text">
+            <span id="checklist-count">0/10</span> items completed
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('pretrip-modal')">Cancel</button>
+        <button class="btn-primary" id="complete-checklist-btn" onclick="completeChecklist()" disabled>
+          <i class="fas fa-check"></i> Complete Checklist
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OTP Verification Modal -->
+  <div class="modal" id="otp-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-key"></i> Passenger Pickup Verification</h3>
+        <button class="modal-close" onclick="closeModal('otp-modal')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Enter the 4-digit OTP provided by the passenger:</p>
+        <div class="otp-input-group">
+          <input type="text" class="otp-input" maxlength="1" id="otp-1">
+          <input type="text" class="otp-input" maxlength="1" id="otp-2">
+          <input type="text" class="otp-input" maxlength="1" id="otp-3">
+          <input type="text" class="otp-input" maxlength="1" id="otp-4">
+        </div>
+        <div class="otp-hint">Passenger OTP: <strong>6789</strong> (for demo)</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('otp-modal')">Cancel</button>
+        <button class="btn-primary" onclick="verifyOTP()">
+          <i class="fas fa-check"></i> Verify OTP
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vehicle Details Modal -->
+  <div class="modal" id="vehicle-details-modal">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h3><i class="fas fa-car"></i> Vehicle Details</h3>
+        <button class="modal-close" onclick="closeModal('vehicle-details-modal')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body" id="vehicle-details-content">
+        <!-- Dynamic content loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <script src="/src/script.js"></script>
+</body>
+
+</html>

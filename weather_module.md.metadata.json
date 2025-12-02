@@ -1,0 +1,5 @@
+{
+  "artifactType": "ARTIFACT_TYPE_OTHER",
+  "summary": "Weather and Road Conditions Intelligence upgrade module for FleetSync platform. Comprehensive specification for integrating real-time weather monitoring, road incident tracking, and environmental intelligence as an operational layer. Includes UI/UX integration, weather-aware routing, impact analysis, new dashboard components, map overlays, data models, API specifications, and safety enhancements. Designed to work seamlessly with existing FleetSync architecture without structural changes.",
+  "updatedAt": "2025-11-30T12:39:52.588714300Z"
+}

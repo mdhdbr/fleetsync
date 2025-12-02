@@ -1,0 +1,763 @@
+# FleetSync: Unified Ride-Hailing + Logistics Platform - Implementation Plan
+
+## Overview
+
+FleetSync is a world-class, fully integrated web-based platform combining ride-hailing/rental services (RideSync) and logistics/warehouse management (LogiSync) into a single, real-time national operations ecosystem focused on Saudi Arabia. The platform aims to achieve 100% operational productivity by eliminating dead mileage, optimizing asset utilization, and providing seamless experiences for all stakeholders.
+
+### Key Objectives
+
+- **Zero Dead Mileage**: Every vehicle movement generates revenue
+- **Real-Time Operations**: Live tracking and instant job allocation
+- **Unified Control**: Single dashboard for all operations across Saudi Arabia
+- **AI-Driven Optimization**: Predictive demand, smart allocation, profitability maximization
+- **Comprehensive Coverage**: Every stakeholder, every scenario, every edge case
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Technology Stack Confirmation**
+> The proposed stack uses React + Vite for frontend, Node.js + Express for backend, and PostgreSQL for database. Please confirm if you have preferences for:
+> - Cloud provider (AWS, Azure, Google Cloud)
+> - Mapping service (Google Maps vs Mapbox - Google Maps recommended for Saudi Arabia)
+> - Real-time communication (Socket.io vs WebRTC)
+> - Mobile app approach (PWA vs React Native)
+
+> [!WARNING]
+> **WMS Integration Scope**
+> Full integration with SAP EWM, Oracle WMS, Zoho Inventory, and Fishbowl requires enterprise API access and credentials. Initial implementation will use mock integrations with documented API contracts for future connection.
+
+> [!IMPORTANT]
+> **Existing Codebase Integration**
+> You mentioned "provided map/tracking code as baseline" - please provide the existing code repository or files so we can integrate them into the new platform architecture.
+
+## Proposed Changes
+
+### Component 1: Project Structure & Infrastructure
+
+#### [NEW] Monorepo Structure
+```
+fleetsync/
+├── packages/
+│   ├── control-center/     # Main web dashboard
+│   ├── api/                # Backend services
+│   ├── mobile-passenger/   # Passenger PWA
+│   ├── mobile-driver/      # Driver PWA
+│   ├── mobile-shipper/     # Shipper PWA
+│   └── shared/             # Shared utilities
+├── docs/                   # Documentation
+└── infrastructure/         # DevOps configs
+```
+
+#### Technology Stack
+- **Frontend**: React 18 + Vite + TypeScript + TailwindCSS
+- **Backend**: Node.js + Express + TypeScript
+- **Database**: PostgreSQL with PostGIS for geospatial
+- **Real-time**: Socket.io for WebSocket connections
+- **Mapping**: Google Maps API (better Saudi Arabia coverage)
+- **State Management**: Redux Toolkit + RTK Query
+- **Authentication**: JWT + OAuth2
+- **File Storage**: AWS S3 or Azure Blob
+- **Caching**: Redis for session and real-time data
+- **Message Queue**: RabbitMQ for job processing
+
+---
+
+### Component 2: Database Architecture
+
+#### Core Tables
+- **users**: All user types (passengers, drivers, shippers, agents)
+- **vehicles**: Cars and trucks with specifications
+- **trips**: Passenger rides (RideSync)
+- **shipments**: Logistics jobs (LogiSync)
+- **locations**: Geospatial data for Saudi Arabia
+- **alerts**: Safety and operational alerts
+- **analytics**: Aggregated metrics and KPIs
+- **schedules**: Driver rosters and shifts
+- **warehouses**: Warehouse locations and dock info
+- **inventory_sync**: WMS integration logs
+
+#### Geospatial Features
+- PostGIS extension for proximity queries
+- Spatial indexes for fast location lookups
+- Route optimization using pgRouting
+
+---
+
+### Component 3: RideSync Module
+
+#### Passenger Booking Interface
+- Interactive map showing all available vehicles
+- Smart filters (vehicle type, features, capacity)
+- AI-driven vehicle suggestions
+- Dynamic pricing calculator
+- Real-time ETA display
+
+#### Driver Operations
+- Trip assignment notification system
+- Integrated GPS navigation
+- COA (Complete on Arrival) workflow
+- Automatic next-job allocation
+- Earnings and performance tracking
+
+#### Vehicle Status System
+Map icons with real-time updates:
+- 🟢 Empty Car (available)
+- 🔵 POB (Passenger On Board)
+- 🟡 En-route to Pickup
+- 🔴 Offline / Break
+- ⚫ Maintenance
+
+---
+
+### Component 4: LogiSync Module
+
+#### Shipper Portal
+- Truck booking form (LTL/FTL)
+- Load specifications (weight, dimensions, type)
+- Pickup and delivery scheduling
+- Real-time shipment tracking
+- Proof of delivery management
+
+#### Truck Operations
+- Driver navigation and route optimization
+- Loading/unloading confirmation
+- COA workflow with auto-assignment
+- Fuel efficiency monitoring
+- Load documentation and photos
+
+#### Truck Status System
+Map icons:
+- 🟢 Empty Truck (available)
+- 🔵 Loaded (in transit)
+- 🟡 On-site Loading
+- 🟠 On-site Unloading
+- 🔴 Returning Empty
+
+---
+
+### Component 5: Warehouse Management System
+
+#### WMS Integration Architecture
+- REST API connectors for each WMS platform
+- Webhook receivers for real-time updates
+- Data transformation layer
+- Error handling and retry logic
+- Audit logging
+
+#### Dock Scheduling System
+- Visual dock door calendar
+- Appointment booking
+- Queue management
+- Turnaround time tracking
+- Congestion alerts
+
+#### Barcode/QR System
+- Mobile scanning interface
+- Inbound/outbound verification
+- Inventory reconciliation
+- Real-time stock updates
+
+---
+
+### Component 6: Unified Control Center
+
+#### Central Dashboard Features
+- **Unified Map**: All vehicles across Saudi Arabia
+- **Multi-layer Filtering**: 
+  - Vehicle type (car/truck)
+  - Service type (RideSync/LogiSync)
+  - Status (active/idle/offline)
+  - Region/city
+  - Driver name
+  - Job category
+- **Real-time Updates**: <5 second refresh via WebSocket
+- **Quick Actions**: Assign jobs, contact drivers, view details
+- **Alert Center**: Active alerts with severity levels
+
+#### Performance Monitoring
+- Live KPI widgets
+- Fleet utilization heatmap
+- Revenue per vehicle/driver
+- Dead mileage tracking
+- Regional performance comparison
+
+---
+
+### Component 7: Analytics & Reporting Engine
+
+#### KPI Dashboard
+- **Active Vehicles**: Real-time count by type
+- **Trips Today**: RideSync + LogiSync combined
+- **Dead KM**: Idle distance tracking
+- **Utilization %**: Asset usage efficiency
+- **Revenue per KM**: Profitability metric
+- **Driver Safety Score**: Composite rating
+- **Warehouse Turnaround**: Average dock time
+
+#### Report Builder
+- Custom query builder
+- Date range selection
+- Export to CSV/Excel/PDF
+- Scheduled reports via email
+- Visual charts and graphs
+
+#### Predictive Analytics
+- Demand forecasting by region/time
+- Optimal vehicle positioning
+- Profitability predictions
+- Maintenance scheduling
+
+---
+
+### Component 8: AI Optimization Engine
+
+#### Smart Allocation Algorithm
+```
+Priority Factors:
+1. Profitability (revenue - repositioning cost)
+2. Proximity (nearest available vehicle)
+3. Vehicle suitability (features, capacity)
+4. Driver eligibility (hours, fatigue, fuel)
+5. Customer priority tier
+```
+
+#### 100% Productivity System
+- COA event triggers immediate search
+- 20km radius job scanning
+- Profitability scoring
+- Auto-assignment with rationale
+- Fallback to manual if no jobs
+
+#### Demand Prediction
+- Historical data analysis
+- Time-of-day patterns
+- Event-based surges
+- Weather impact modeling
+- Auto-positioning recommendations
+
+---
+
+### Component 9: Driver Management & Safety
+
+#### Roster & Scheduling
+- Shift planning calendar
+- Working hour limits (Saudi labor law)
+- Fatigue rule enforcement
+- Rest period tracking
+- Auto-scheduling algorithm
+
+#### Safety Monitoring
+- **Speed Alerts**: >120 km/h triggers warning
+- **Harsh Braking**: G-force detection
+- **Rapid Acceleration**: Fuel waste alerts
+- **Fatigue Detection**: >10 hours worked
+- **Route Deviation**: Geofence violations
+
+#### Driver Scoring System
+Composite score based on:
+- Speed discipline (30%)
+- Fuel efficiency (20%)
+- On-time performance (25%)
+- Passenger/shipper feedback (15%)
+- Safety compliance (10%)
+
+#### Digital Vehicle Checks
+- Pre-trip inspection checklist
+- Photo documentation
+- Issue reporting
+- Maintenance scheduling
+- Compliance tracking
+
+---
+
+### Component 10: Mobile Applications (PWA)
+
+#### Passenger App
+- Account management
+- Ride booking
+- Real-time tracking
+- In-app chat/call
+- Payment integration
+- Trip history
+- Ratings and feedback
+
+#### Driver App
+- Trip/job notifications
+- Navigation integration
+- COA workflow
+- Earnings dashboard
+- Performance metrics
+- Support chat
+
+#### Shipper App
+- Truck booking
+- Shipment tracking
+- Document upload
+- Delivery confirmation
+- Invoice management
+- Analytics
+
+---
+
+### Component 11: API Architecture
+
+#### RESTful Endpoints
+
+**Authentication**
+- `POST /api/auth/login`
+- `POST /api/auth/register`
+- `POST /api/auth/refresh`
+
+**RideSync**
+- `GET /api/vehicles/available`
+- `POST /api/trips/book`
+- `GET /api/trips/:id`
+- `PUT /api/trips/:id/coa`
+
+**LogiSync**
+- `GET /api/trucks/available`
+- `POST /api/shipments/book`
+- `GET /api/shipments/:id`
+- `PUT /api/shipments/:id/coa`
+
+**Allocation**
+- `POST /api/allocation/assign_next`
+- `GET /api/allocation/score`
+
+**Analytics**
+- `GET /api/analytics/kpi`
+- `GET /api/analytics/reports`
+- `POST /api/analytics/export`
+
+**Alerts**
+- `GET /api/alerts`
+- `PUT /api/alerts/:id/acknowledge`
+- `POST /api/alerts/configure`
+
+**WMS**
+- `POST /api/wms/sync`
+- `GET /api/wms/inventory`
+- `POST /api/wms/dock/schedule`
+
+#### WebSocket Events
+- `vehicle:location` - Real-time GPS updates
+- `trip:status` - Trip status changes
+- `alert:new` - New safety alerts
+- `job:assigned` - Job assignment notifications
+- `kpi:update` - Dashboard metric updates
+
+---
+
+### Component 12: Weather & Road Conditions Intelligence
+
+#### Real-Time Weather Integration
+
+**Weather Data Sources**
+- Primary: OpenWeatherMap API / AccuWeather
+- Secondary: Saudi Arabia Meteorological Authority
+- Traffic: Google Maps Traffic API / HERE Traffic API
+
+**Weather Monitoring Features**
+- Real-time weather conditions by region
+- 3-day forecast integration
+- Severe weather alerts (sandstorms, heat waves, heavy rain)
+- Temperature and visibility tracking
+- Wind speed monitoring
+
+#### Road Condition Monitoring
+
+**Incident Detection**
+- Real-time traffic incidents
+- Road closures and construction
+- Accident monitoring
+- Flooding and hazard alerts
+- Congestion tracking
+
+**Data Integration**
+- Traffic API integration
+- Government road authority feeds
+- Crowdsourced incident reports
+- Driver-reported conditions
+
+#### Operational Impact Analysis
+
+**Fleet Impact Assessment**
+- Weather-affected vehicles identification
+- Route delay predictions
+- ETA adjustments based on conditions
+- Driver safety risk scoring
+- Automatic rerouting recommendations
+
+**Proactive Alerts**
+- Weather warnings for active trips
+- Road incident notifications
+- Hazard proximity alerts
+- Visibility and speed advisories
+- Preventive maintenance triggers
+
+#### UI/UX Integration
+
+**Dashboard Enhancements**
+- Active Weather Alerts stat card
+- Operational Conditions panel
+  - Live weather forecast (current + 3-day)
+  - Active road incidents list
+- Weather impact indicators on KPIs
+
+**Map Overlays**
+- Weather layer toggle (rain, storm, heat zones)
+- Road incident markers
+- Weather zone boundaries
+- Severity-based color coding
+- Micro-indicators on vehicle markers:
+  - 🟠 Orange dot: Weather impact
+  - 🔴 Red dot: Road incident impact
+
+**Vehicle Status Enhancements**
+- Weather impact line (e.g., "Heavy rain slowing progress")
+- Road impact line (e.g., "Congestion on King Fahd Road")
+- Conditional display (hidden when no impact)
+
+**New Modals**
+- Weather Alert Modal
+  - Alert type and severity
+  - Affected area boundary
+  - Full description
+  - Recommended actions
+- Road Incident Modal
+  - Incident type and location
+  - Traffic impact description
+  - Expected clearance time
+  - Suggested reroute
+
+#### Navigation Structure
+
+**New Sidebar Section**
+- **Weather & Road Conditions** (📍 Below Tracking)
+  - Weather Forecast Dashboard
+  - Real-time Road Condition Alerts
+  - Impact Analysis on Fleet Operations
+  - Weather-Aware Route Optimization
+  - Weather & Road Condition Reports
+
+**Enhanced Existing Sections**
+- Tracking → Add: Weather & Road Overlays
+- Reports → Add: Weather Impact Report, Road Conditions Report
+- Integrations → Add: Weather API, Traffic Data API
+
+#### Weather-Aware Route Optimization
+
+**Smart Routing Algorithm**
+```
+Route Score = Base Route Score - Weather Penalty - Traffic Penalty
+
+Weather Penalty Factors:
+- Heavy rain: +15% travel time
+- Sandstorm: +30% travel time
+- Extreme heat: +10% travel time
+- Low visibility: +20% travel time
+
+Traffic Penalty Factors:
+- Accident: +25% travel time
+- Road closure: Infinite (avoid)
+- Construction: +15% travel time
+- Heavy congestion: +40% travel time
+```
+
+**Dynamic Rerouting**
+- Automatic route recalculation on weather change
+- Real-time traffic avoidance
+- Driver notification of better routes
+- ETA updates based on conditions
+
+#### Analytics & Reporting
+
+**Weather Impact Report**
+- Trips delayed by weather
+- Total time lost to weather
+- Weather disruption heatmap
+- Recommended fleet adjustments
+- Seasonal pattern analysis
+
+**Road Conditions Report**
+- All incidents encountered
+- Impact on ETAs
+- Incident frequency by region
+- Predictive risk analysis
+- High-risk route identification
+
+**Performance Metrics**
+- Weather-related delays (%)
+- Incident-related delays (%)
+- Successful reroutes
+- Time saved by proactive routing
+- Driver safety improvements
+
+#### Data Structures
+
+**Weather Data Model**
+```javascript
+{
+  current: {
+    temp: 32,
+    icon: "sunny",
+    description: "Clear Sky",
+    humidity: 45,
+    windSpeed: 15,
+    visibility: 10
+  },
+  forecast: [
+    { day: "Mon", icon: "rain", high: 30, low: 23 },
+    { day: "Tue", icon: "cloudy", high: 31, low: 24 },
+    { day: "Wed", icon: "sunny", high: 33, low: 25 }
+  ],
+  alerts: [
+    {
+      id: 1,
+      type: "Heavy Rainfall",
+      severity: "High",
+      location: "Riyadh",
+      description: "Expected flooding in low-lying areas",
+      impact: "Reduced visibility",
+      affectedVehicles: [123, 456]
+    }
+  ]
+}
+```
+
+**Road Incidents Model**
+```javascript
+{
+  incidents: [
+    {
+      id: 17,
+      type: "Accident",
+      severity: "High",
+      location: { lat: 24.7136, lng: 46.6753, name: "King Fahd Road" },
+      description: "Multi-vehicle collision",
+      impact: "Major congestion",
+      expectedClearance: "2 hours",
+      affectedRoutes: ["route_123", "route_456"],
+      recommendedDetour: { ... }
+    }
+  ]
+}
+```
+
+#### Real-Time Simulation
+
+**Dynamic Updates (Every 20-30 seconds)**
+- Random weather/road impact assignment
+- UI updates with new conditions
+- Automatic route re-evaluation
+- Alert generation and notification
+- Dashboard metric updates
+
+#### API Endpoints
+
+**Weather Endpoints**
+- `GET /api/weather/current/:region`
+- `GET /api/weather/forecast/:region`
+- `GET /api/weather/alerts`
+- `GET /api/weather/impact/:vehicleId`
+
+**Road Conditions Endpoints**
+- `GET /api/road/incidents`
+- `GET /api/road/incidents/:region`
+- `GET /api/road/impact/:routeId`
+- `POST /api/road/report` (driver-reported)
+
+**Integration Endpoints**
+- `POST /api/integrations/weather/configure`
+- `POST /api/integrations/traffic/configure`
+- `GET /api/integrations/weather/status`
+
+#### Safety Enhancements
+
+**Weather-Based Safety Rules**
+- Speed limits during heavy rain
+- Mandatory breaks during sandstorms
+- Visibility-based routing restrictions
+- Heat-related driver fatigue monitoring
+
+**Incident Response**
+- Automatic driver notification
+- Control center alerts
+- Emergency service coordination
+- Alternative route suggestions
+
+---
+
+## Verification Plan
+
+### Automated Tests
+
+1. **Unit Tests** (Jest + React Testing Library)
+   - Component rendering
+   - Business logic functions
+   - API route handlers
+   - Database queries
+
+2. **Integration Tests** (Supertest)
+   - API endpoint workflows
+   - Database transactions
+   - WebSocket connections
+   - Authentication flows
+
+3. **E2E Tests** (Playwright)
+   - Complete booking flows
+   - COA automation
+   - Driver assignment
+   - Alert generation
+
+### Manual Verification
+
+1. **Map Functionality**
+   - Verify Saudi Arabia map loads correctly
+   - Test vehicle icon updates in real-time
+   - Validate filtering and search
+   - Check proximity calculations
+
+2. **Booking Workflows**
+   - Test passenger booking with various scenarios
+   - Verify truck booking for LTL/FTL
+   - Check dynamic pricing calculations
+   - Validate smart allocation suggestions
+
+3. **COA Automation**
+   - Complete a trip/shipment
+   - Verify automatic next-job search
+   - Check profitability scoring
+   - Validate driver eligibility checks
+
+4. **Safety Features**
+   - Trigger speed alert (>120 km/h simulation)
+   - Test fatigue modal (>10 hours)
+   - Verify break recording
+   - Check alert acknowledgment
+
+5. **Analytics Dashboard**
+   - Verify KPI calculations
+   - Test report generation
+   - Check CSV export
+   - Validate real-time updates
+
+6. **Mobile Responsiveness**
+   - Test on various screen sizes
+   - Verify touch interactions
+   - Check offline capabilities
+   - Test PWA installation
+
+### Performance Benchmarks
+
+- Map load time: <3 seconds
+- Dashboard refresh: <5 seconds
+- API response time: <500ms
+- WebSocket latency: <100ms
+- Concurrent users: 10,000+
+- Vehicle tracking: 5,000+ simultaneous
+
+### Security Audit
+
+- Authentication and authorization
+- SQL injection prevention
+- XSS protection
+- CSRF tokens
+- Rate limiting
+- Data encryption
+- API key management
+
+---
+
+## Upgrade Module: Real-Time Environmental & Infrastructural Intelligence
+
+This module extends the existing FleetSync system with real-time environmental and infrastructural intelligence. It is applied on top of the main prompt without altering its structure.
+
+### Upgrade Objective
+Transform FleetSync into a proactive, environment-aware operational command system by integrating real-time weather intelligence, road conditions, and hazard monitoring. This upgrade interacts deeply with tracking, reporting, alerts, UI, route decisions, driver safety, and control center workflows — not as a separate page but as an integrated operational layer.
+
+### Section 1: New Sidebar Navigation & Module
+- Title: Weather & Road Conditions
+- Icon: fas fa-cloud-sun-rain
+- Placement: Immediately below Tracking
+- Submenu Items:
+  - Weather Forecast Dashboard
+  - Real-time Road Condition Alerts
+  - Impact Analysis on Fleet Operations
+  - Weather-Aware Route Optimization
+  - Weather & Road Condition Reports
+- Modifications to Existing Menus:
+  - Tracking: add Weather & Road Overlays
+  - Reports: add Weather Impact Report, Road Conditions Report
+  - Integrations: add Weather API, Traffic Data API
+
+### Section 2: Dashboard-Level Integrations
+- New Stats Card:
+  - Icon: fas fa-cloud-rain
+  - Label: Active Weather Alerts
+  - Behavior: click filters map & vehicle list to show only weather-impacted assets
+- Operational Panel: Operational Conditions
+  - Column 1 — Live Weather Forecast
+    - Header: Live Weather Forecast
+    - Elements: current-condition icon, temperature, description, 3-day forecast strip
+  - Column 2 — Active Road Conditions
+    - Header: Active Road Incidents
+    - Scrollable list: type, severity badge, short description; click opens modal + highlights on map
+
+### Section 3: Upgraded Main Tracking Map
+- Weather Overlay Toggle:
+  - Icon: fas fa-cloud-sun-rain
+  - Label: Weather Overlay
+  - Behavior: applies semitransparent weather shading (rain, storm, heatwave zones)
+- Updated Marker Logic:
+  - Orange dot → weather alert affecting vehicle
+  - Red dot → road incident affecting route
+- Legend Additions:
+  - Weather Impact (orange dot)
+  - Road Impact (red dot)
+- Standalone Incident Markers:
+  - Weather zones and road incidents with modal details, clearance ETA, recommended rerouting
+
+### Section 4: Enhanced Vehicle List & Status Cards
+- Conditional lines per vehicle:
+  - Weather Impact Line: [Weather Icon] Heavy rain slowing progress
+  - Road Impact Line: [Road Icon] Congestion on NH48
+  - Hidden when no impact
+
+### Section 5: New Detailed Modals
+- Weather Alert Modal: via weather zones or affected vehicle marker
+  - Alert type, severity, area boundary, description, recommended actions
+- Road Incident Modal: via road-affected vehicle marker or incident marker
+  - Incident type, location, severity, impact, clearance time, suggested reroute
+
+### Section 6: Data Structures (Sample JavaScript Models)
+```js
+const weatherData = {
+  current: { temp: 32, icon: 'sunny', description: 'Clear Sky' },
+  forecast: [
+    { day: 'Mon', icon: 'rain', high: 30, low: 23 },
+    { day: 'Tue', icon: 'cloudy', high: 31, low: 24 },
+    { day: 'Wed', icon: 'sunny', high: 33, low: 25 },
+  ],
+  alerts: [
+    { id: 1, type: 'Heavy Rainfall', severity: 'High', location: 'Chennai', description: 'Expected flooding in low-lying areas', impact: 'Reduced visibility' },
+  ],
+}
+
+const roadConditions = {
+  incidents: [
+    { id: 17, type: 'Accident', severity: 'High', location: 'NH48', description: 'Multi-vehicle collision', impact: 'Major congestion', expectedClearance: '2 hours' },
+  ],
+}
+```
+
+### Real-Time Simulation Feature
+- Every 20–30 seconds, logic randomly assigns weather or road impact to vehicles
+- UI updates dynamically and demonstrates automatic route re-evaluation
+
+### Section 7: Reporting & Analytics Upgrade
+- Weather Impact Report (fas fa-cloud-rain): list of trips delayed by weather, total time lost, heatmap of disruptions, recommended fleet adjustments
+- Road Conditions Report (fas fa-road): all road incidents encountered, impact on ETAs, frequency by region, predictive risk analysis
+
+### End of Upgrade Module
+This module is appended after the FleetSync master prompt. It enhances but does not modify any part of the original prompt structure.

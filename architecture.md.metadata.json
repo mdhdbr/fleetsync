@@ -1,0 +1,5 @@
+{
+  "artifactType": "ARTIFACT_TYPE_OTHER",
+  "summary": "System architecture diagram for FleetSync platform showing the complete technical architecture including client applications (Control Center, Passenger/Driver/Shipper PWAs), API Gateway, microservices (Auth, RideSync, LogiSync, Analytics, WMS Integration, Allocation Engine), data layer (PostgreSQL, Redis, RabbitMQ), external integrations (Google Maps, WMS systems, Payment Gateway, SMS/Push), and infrastructure components.",
+  "updatedAt": "2025-11-30T11:45:34.975919100Z"
+}

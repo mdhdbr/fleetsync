@@ -1,0 +1,5 @@
+{
+  "artifactType": "ARTIFACT_TYPE_OTHER",
+  "summary": "Detailed workflow flowcharts for FleetSync platform covering RideSync booking, LogiSync shipment, COA automation, driver assignment, warehouse operations, alert generation, and analytics report generation. Includes comprehensive Mermaid diagrams showing decision points, system interactions, and edge case handling for all major operational scenarios.",
+  "updatedAt": "2025-11-30T11:51:44.397283800Z"
+}

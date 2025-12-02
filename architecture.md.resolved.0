@@ -1,0 +1,423 @@
+# FleetSync System Architecture
+
+## High-Level Architecture Diagram
+
+```mermaid
+graph TB
+    subgraph "Client Layer"
+        CC[Control Center<br/>React + Vite]
+        PA[Passenger App<br/>PWA]
+        DA[Driver App<br/>PWA]
+        SA[Shipper App<br/>PWA]
+    end
+    
+    subgraph "API Gateway Layer"
+        AG[API Gateway<br/>Load Balancer<br/>Rate Limiting]
+        WS[WebSocket Server<br/>Socket.io]
+    end
+    
+    subgraph "Application Services"
+        AUTH[Auth Service<br/>JWT + OAuth2]
+        RIDE[RideSync Service<br/>Passenger Trips]
+        LOGI[LogiSync Service<br/>Freight Shipments]
+        ALLOC[Allocation Engine<br/>COA + Auto-Assign]
+        ALERT[Alert Service<br/>Safety Rules]
+        ANAL[Analytics Service<br/>KPI + Reports]
+        WMS[WMS Integration<br/>Warehouse Sync]
+        SCHED[Scheduler Service<br/>Driver Roster]
+    end
+    
+    subgraph "Data Layer"
+        PG[(PostgreSQL<br/>+ PostGIS)]
+        REDIS[(Redis<br/>Cache + Sessions)]
+        MQ[RabbitMQ<br/>Job Queue]
+        S3[S3/Blob Storage<br/>Documents]
+    end
+    
+    subgraph "External Services"
+        MAPS[Google Maps API<br/>Routing + Geocoding]
+        WMS1[SAP EWM]
+        WMS2[Oracle WMS]
+        WMS3[Zoho Inventory]
+        PAY[Payment Gateway]
+        SMS[SMS/Push Service]
+    end
+    
+    CC --> AG
+    PA --> AG
+    DA --> AG
+    SA --> AG
+    
+    CC --> WS
+    PA --> WS
+    DA --> WS
+    SA --> WS
+    
+    AG --> AUTH
+    AG --> RIDE
+    AG --> LOGI
+    AG --> ALLOC
+    AG --> ALERT
+    AG --> ANAL
+    AG --> WMS
+    AG --> SCHED
+    
+    WS --> RIDE
+    WS --> LOGI
+    WS --> ALLOC
+    WS --> ALERT
+    
+    AUTH --> PG
+    AUTH --> REDIS
+    
+    RIDE --> PG
+    RIDE --> REDIS
+    RIDE --> MQ
+    RIDE --> MAPS
+    
+    LOGI --> PG
+    LOGI --> REDIS
+    LOGI --> MQ
+    LOGI --> MAPS
+    
+    ALLOC --> PG
+    ALLOC --> REDIS
+    ALLOC --> MQ
+    
+    ALERT --> PG
+    ALERT --> REDIS
+    ALERT --> SMS
+    
+    ANAL --> PG
+    ANAL --> REDIS
+    
+    WMS --> PG
+    WMS --> WMS1
+    WMS --> WMS2
+    WMS --> WMS3
+    
+    SCHED --> PG
+    SCHED --> REDIS
+    
+    RIDE --> S3
+    LOGI --> S3
+    
+    RIDE --> PAY
+    
+    style CC fill:#4A90E2
+    style PA fill:#4A90E2
+    style DA fill:#4A90E2
+    style SA fill:#4A90E2
+    style ALLOC fill:#F5A623
+    style ALERT fill:#D0021B
+    style ANAL fill:#7ED321
+```
+
+## Data Flow Architecture
+
+```mermaid
+sequenceDiagram
+    participant Driver
+    participant DriverApp
+    participant API
+    participant AllocEngine
+    participant Database
+    participant ControlCenter
+    
+    Note over Driver,ControlCenter: COA Workflow & Auto-Assignment
+    
+    Driver->>DriverApp: Tap "Complete on Arrival"
+    DriverApp->>API: PUT /trips/:id/coa
+    API->>Database: Update trip status
+    API->>AllocEngine: Trigger assign_next
+    
+    AllocEngine->>Database: Get driver eligibility
+    Note over AllocEngine: Check hours, fuel, maintenance
+    
+    AllocEngine->>Database: Search jobs (20km radius)
+    AllocEngine->>AllocEngine: Score by profitability
+    
+    alt Jobs Available
+        AllocEngine->>Database: Assign best job
+        AllocEngine->>DriverApp: Push notification
+        AllocEngine->>ControlCenter: WebSocket update
+        DriverApp->>Driver: Show new assignment
+    else No Jobs
+        AllocEngine->>DriverApp: No jobs available
+        AllocEngine->>ControlCenter: Driver idle alert
+    end
+```
+
+## RideSync Booking Flow
+
+```mermaid
+flowchart TD
+    Start([Passenger Opens App]) --> Map[View Available Cars on Map]
+    Map --> Input[Enter Destination + Requirements]
+    Input --> Check{Special Needs?}
+    
+    Check -->|Child Seat| Filter1[Filter Cars with Child Seat]
+    Check -->|Large Group| Filter2[Check MPV Availability]
+    Check -->|Standard| Filter3[All Available Cars]
+    
+    Filter2 --> MPV{MPV Available?}
+    MPV -->|Yes| Suggest1[Suggest MPV]
+    MPV -->|No| Suggest2[Suggest 2 Nearby Cars]
+    
+    Filter1 --> Suggest1
+    Filter3 --> Suggest1
+    
+    Suggest1 --> Price[Calculate Dynamic Price]
+    Suggest2 --> Price
+    
+    Price --> Show[Show Options:<br/>Most Profitable vs Best for User]
+    Show --> Confirm{User Confirms?}
+    
+    Confirm -->|Yes| Book[Create Booking]
+    Confirm -->|No| Map
+    
+    Book --> Assign[Assign Driver]
+    Assign --> Notify[Notify Driver]
+    Notify --> Track[Real-Time Tracking]
+    Track --> End([Trip Starts])
+```
+
+## LogiSync Shipment Flow
+
+```mermaid
+flowchart TD
+    Start([Shipper Logs In]) --> Form[Fill Truck Booking Form]
+    Form --> Type{Load Type?}
+    
+    Type -->|LTL| LTL[Less Than Truckload]
+    Type -->|FTL| FTL[Full Truckload]
+    
+    LTL --> Details[Enter Load Details:<br/>Weight, Dimensions, Type]
+    FTL --> Details
+    
+    Details --> Truck[Select Truck Type:<br/>Flatbed, Reefer, Tanker]
+    Truck --> Schedule[Set Pickup/Delivery Times]
+    Schedule --> Search[Search Available Trucks]
+    
+    Search --> Available{Trucks Found?}
+    Available -->|Yes| Show[Show Options + Pricing]
+    Available -->|No| Queue[Add to Queue]
+    
+    Show --> Book[Book Truck]
+    Queue --> Notify1[Notify When Available]
+    
+    Book --> WMS[Sync with WMS]
+    WMS --> Dock[Schedule Dock Door]
+    Dock --> Assign[Assign Driver]
+    Assign --> Track[Real-Time Tracking]
+    Track --> POD[Proof of Delivery]
+    POD --> End([Complete])
+```
+
+## Database Schema Overview
+
+```mermaid
+erDiagram
+    USERS ||--o{ TRIPS : creates
+    USERS ||--o{ SHIPMENTS : creates
+    USERS ||--o{ SCHEDULES : has
+    VEHICLES ||--o{ TRIPS : assigned
+    VEHICLES ||--o{ SHIPMENTS : assigned
+    VEHICLES ||--o{ ALERTS : generates
+    TRIPS ||--o{ LOCATIONS : tracks
+    SHIPMENTS ||--o{ LOCATIONS : tracks
+    WAREHOUSES ||--o{ SHIPMENTS : handles
+    WAREHOUSES ||--o{ DOCK_SCHEDULES : has
+    SHIPMENTS ||--o{ INVENTORY_SYNC : triggers
+    
+    USERS {
+        uuid id PK
+        string email
+        string role
+        jsonb profile
+        timestamp created_at
+    }
+    
+    VEHICLES {
+        uuid id PK
+        string type
+        string status
+        jsonb features
+        point current_location
+        uuid driver_id FK
+    }
+    
+    TRIPS {
+        uuid id PK
+        uuid passenger_id FK
+        uuid vehicle_id FK
+        point pickup_location
+        point dropoff_location
+        string status
+        decimal price
+        timestamp created_at
+    }
+    
+    SHIPMENTS {
+        uuid id PK
+        uuid shipper_id FK
+        uuid vehicle_id FK
+        string load_type
+        decimal weight
+        string status
+        timestamp created_at
+    }
+    
+    ALERTS {
+        uuid id PK
+        uuid vehicle_id FK
+        string type
+        string severity
+        jsonb data
+        boolean acknowledged
+    }
+    
+    WAREHOUSES {
+        uuid id PK
+        string name
+        point location
+        integer dock_count
+        jsonb wms_config
+    }
+```
+
+## Security Architecture
+
+```mermaid
+graph LR
+    subgraph "Public Internet"
+        Client[Client Apps]
+    end
+    
+    subgraph "Edge Layer"
+        CDN[CDN<br/>CloudFlare]
+        WAF[Web Application<br/>Firewall]
+    end
+    
+    subgraph "Application Layer"
+        LB[Load Balancer<br/>SSL Termination]
+        AG[API Gateway<br/>Rate Limiting]
+        AUTH[Auth Service<br/>JWT Validation]
+    end
+    
+    subgraph "Service Layer"
+        API1[Service 1]
+        API2[Service 2]
+        API3[Service 3]
+    end
+    
+    subgraph "Data Layer"
+        DB[(Encrypted DB)]
+        CACHE[(Redis<br/>TLS)]
+    end
+    
+    Client --> CDN
+    CDN --> WAF
+    WAF --> LB
+    LB --> AG
+    AG --> AUTH
+    AUTH --> API1
+    AUTH --> API2
+    AUTH --> API3
+    API1 --> DB
+    API2 --> DB
+    API3 --> DB
+    API1 --> CACHE
+    API2 --> CACHE
+    
+    style WAF fill:#D0021B
+    style AUTH fill:#F5A623
+    style DB fill:#7ED321
+```
+
+## Deployment Architecture
+
+```mermaid
+graph TB
+    subgraph "Production Environment"
+        subgraph "Region: Saudi Arabia"
+            LB1[Load Balancer]
+            
+            subgraph "Auto-Scaling Group"
+                APP1[App Server 1]
+                APP2[App Server 2]
+                APP3[App Server 3]
+            end
+            
+            subgraph "Database Cluster"
+                DB1[(Primary DB)]
+                DB2[(Replica 1)]
+                DB3[(Replica 2)]
+            end
+            
+            REDIS1[(Redis Cluster)]
+            MQ1[RabbitMQ Cluster]
+        end
+    end
+    
+    subgraph "CDN & Static Assets"
+        CDN[CloudFlare CDN]
+        S3[S3 Bucket]
+    end
+    
+    subgraph "Monitoring & Logging"
+        MON[Prometheus]
+        LOG[ELK Stack]
+        ALERT[AlertManager]
+    end
+    
+    LB1 --> APP1
+    LB1 --> APP2
+    LB1 --> APP3
+    
+    APP1 --> DB1
+    APP2 --> DB1
+    APP3 --> DB1
+    
+    DB1 --> DB2
+    DB1 --> DB3
+    
+    APP1 --> REDIS1
+    APP2 --> REDIS1
+    APP3 --> REDIS1
+    
+    APP1 --> MQ1
+    APP2 --> MQ1
+    APP3 --> MQ1
+    
+    CDN --> S3
+    
+    APP1 --> MON
+    APP2 --> MON
+    APP3 --> MON
+    
+    APP1 --> LOG
+    APP2 --> LOG
+    APP3 --> LOG
+    
+    MON --> ALERT
+```
+
+## Technology Stack Summary
+
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Frontend** | React 18 + Vite | Control Center UI |
+| **Mobile** | PWA (React) | Passenger, Driver, Shipper apps |
+| **Backend** | Node.js + Express | API services |
+| **Database** | PostgreSQL + PostGIS | Primary data store |
+| **Cache** | Redis | Session, real-time data |
+| **Queue** | RabbitMQ | Async job processing |
+| **WebSocket** | Socket.io | Real-time updates |
+| **Maps** | Google Maps API | Mapping, routing, geocoding |
+| **Storage** | AWS S3 / Azure Blob | Documents, images |
+| **Auth** | JWT + OAuth2 | Authentication |
+| **Monitoring** | Prometheus + Grafana | Metrics, alerts |
+| **Logging** | ELK Stack | Centralized logging |
+| **CI/CD** | GitHub Actions | Automated deployment |
+| **Hosting** | AWS / Azure | Cloud infrastructure |

@@ -1,0 +1,5 @@
+{
+  "incidents": [
+    { "id": 17, "type": "Accident", "severity": "High", "location": "King Fahd Rd", "description": "Multi-vehicle collision", "impact": "Major congestion", "expectedClearance": "2 hours" }
+  ]
+}
