@@ -1213,29 +1213,31 @@ console.log(`
 // EXPORT FOR PRODUCTION USE
 // ============================================
 
-// In production, export these functions for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    switchSection,
-    driverLogin,
-    toggleDuty,
-    acceptJob,
-    rejectJob,
-    startTrip,
-    markArrived,
-    completeTrip,
-    verifyOTP,
-    showPreTripChecklist,
-    completeChecklist,
-    showIncidentReport,
-    requestMobileService,
-    showVehicleDetails,
-    acknowledgeAlert,
-    clearAllAlerts,
-    requestVendor,
-    assignJob,
-    createNewJob,
-    openModal,
-    closeModal
-  };
-}
+// Make functions globally accessible for onclick handlers
+window.switchSection = switchSection;
+window.driverLogin = driverLogin;
+window.toggleDuty = toggleDuty;
+window.acceptJob = acceptJob;
+window.rejectJob = rejectJob;
+window.startTrip = startTrip;
+window.markArrived = markArrived;
+window.completeTrip = completeTrip;
+window.verifyOTP = verifyOTP;
+window.showPreTripChecklist = showPreTripChecklist;
+window.completeChecklist = completeChecklist;
+window.showIncidentReport = showIncidentReport;
+window.requestMobileService = requestMobileService;
+window.showVehicleDetails = showVehicleDetails;
+window.acknowledgeAlert = acknowledgeAlert;
+window.clearAllAlerts = clearAllAlerts;
+window.requestVendor = requestVendor;
+window.assignJob = assignJob;
+window.createNewJob = createNewJob;
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.toggleWeatherOverlay = toggleWeatherOverlay;
+window.refreshMap = refreshMap;
+window.exportVehicles = exportVehicles;
+window.generateWeatherImpactReport = generateWeatherImpactReport;
+window.generateRoadConditionsReport = generateRoadConditionsReport;
+window.showIncidentDetails = showIncidentDetails;
