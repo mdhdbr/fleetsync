@@ -1,0 +1,8 @@
+{
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "buildCommand": "npm run build --workspace=control-center",
+    "devCommand": "npm run dev --workspace=control-center",
+    "installCommand": "npm install",
+    "framework": null,
+    "outputDirectory": "packages/control-center/dist"
+}
